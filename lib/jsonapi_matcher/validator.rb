@@ -3,7 +3,7 @@ module JSONAPIMatcher
 
     attr_reader :json
 
-    def initialize(opts)
+    def initialize(opts = {})
     end
 
     def valid?(candidate)
