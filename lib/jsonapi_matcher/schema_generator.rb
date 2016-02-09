@@ -15,7 +15,7 @@ module JSONAPIMatcher
       node.add_validator_for key: key, validator: generator.generate_node
     end
 
-    def with_attribute(key:, opts: {})
+    def has_attribute(key:, opts: {})
       node.add_validator_for(key: key, validator: _create_validator(opts))
     end
 

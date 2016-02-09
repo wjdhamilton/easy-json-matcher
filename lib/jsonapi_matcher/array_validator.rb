@@ -1,7 +1,7 @@
 require 'jsonapi_matcher/validator'
 module JSONAPIMatcher
   class ArrayValidator < Validator
-    def valid?
+    def _validate
     end
   end
 end

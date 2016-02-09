@@ -4,22 +4,24 @@ module JSONAPIMatcher
 
     SCHEMAS = {}
     private_constant :SCHEMAS
-
-    def self.available_schemas
+  class << self
+    def available_schemas
       schemas.keys
     end
 
-    def self.schema_for(name)
+    def schema_for(name)
       schemas[name]
     end
 
-    def self.add_schema(name:, schema:)
+    def add_schema(name:, schema:)
       schemas[name] = schema
     end
 
-  private
-
-    def self.schemas
+    def schemas
       SCHEMAS
     end
+  end
+
+  # Override of Ruby error for namespacing
+  class Error < RuntimeError; end
 end

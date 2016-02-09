@@ -44,7 +44,7 @@ GEM
       tzinfo (~> 1.1)
     arel (6.0.3)
     builder (3.2.2)
-    byebug (8.2.1)
+    byebug (8.2.2)
     concurrent-ruby (1.0.0)
     debug_inspector (0.0.2)
     erubis (2.7.0)
@@ -56,9 +56,12 @@ GEM
       nokogiri (>= 1.5.9)
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
+    metaclass (0.0.4)
     mime-types (2.99)
     mini_portile2 (2.0.0)
     minitest (5.8.4)
+    mocha (1.1.0)
+      metaclass (~> 0.0.1)
     nokogiri (1.6.7.2)
       mini_portile2 (~> 2.0.0.rc2)
     pretty_backtrace (0.1.3)
@@ -110,6 +113,7 @@ PLATFORMS
 DEPENDENCIES
   byebug
   jsonapi_matcher!
+  mocha
   pretty_backtrace
   sqlite3
 
