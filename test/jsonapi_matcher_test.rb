@@ -18,7 +18,6 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
                           'title'=> "Here's a title"
                           }
                     }.to_json
-    byebug
     assert(test_schema.valid? valid_json)
   end
 
@@ -164,12 +163,33 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
 
       assert(test_schema.valid?(valid_json), 'Value did not validate')
 
-      invalid_json = {
+       # There is no 'negative' test for this validator at this stage, since
+       # the lack of a value does not mean the key is required. See the tests
+       # on required validation later on.
+  end
 
-      }.to_json
+  test "As a user I want to validate nested json objects" do
+    test_schema = JSONAPIMatcher::SchemaGenerator.new {|schema|
+      schema.has_attribute(key: :level_1_attribute, opts: {type: :number})
+      schema.contains_node(key: :level_2) do |n|
+        n.has_attribute(key: :level_2_attribute, opts: {type: :number})
+        n.contains_node(key: :level_3) do |n3|
+          n3.has_attribute(key: :level_3_attribute, opts: {type: :number})
+        end
+      end
+    }.generate_node
 
-      assert_not(test_schema.valid?(valid_json), 'Empty object passed value validation')
+    valid_json = {
+      level_1_attribute: 1,
+      level_2:{
+        level_2_attribute: 2,
+        level_3:{
+          level_3_attribute: 3
+        }
+      }
+    }.to_json
 
+    assert(test_schema.valid?(valid_json), "Nested JSON was not correctly validated")
   end
 
   test "As a user I want to be able to register a Schema so I can reuse it later" do
@@ -180,6 +200,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
 
     assert(JSONAPIMatcher.available_schemas.include?(:test), ":test not found in available_nodes")
   end
+
 
   test "As a user I want to know why my json was not valid" do
 

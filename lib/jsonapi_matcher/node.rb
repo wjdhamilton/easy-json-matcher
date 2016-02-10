@@ -1,6 +1,7 @@
 require 'jsonapi_matcher'
 require 'jsonapi_matcher/validator_factory'
 require 'json'
+require 'jsonapi_matcher/content_wrapper'
 module JSONAPIMatcher
   class Node < Validator
     extend Forwardable
@@ -39,7 +40,7 @@ module JSONAPIMatcher
 
     def _set_content(candidate)
       candidate = _prep_candidate(candidate)
-      @content = _is_root? ? candidate : candidate[key.to_s]
+      @content = _is_root? ? candidate : candidate[key]
     end
 
     def _is_root?
@@ -48,11 +49,15 @@ module JSONAPIMatcher
 
     def _prep_candidate(json)
       if json.is_a? String
-        JSON.parse(json)
+        wrap_content(JSON.parse(json))
       else
         raise "Content for validation must be either a Hash or a String - you supplied #{json}, which is a #{json.class.name}" unless json.respond_to? :[]
-        json
+        wrap_content(json)
       end
+    end
+
+    def wrap_content(json)
+      ContentWrapper.new(json)
     end
   end
 end
