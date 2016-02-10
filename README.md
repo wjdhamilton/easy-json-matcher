@@ -1,4 +1,4 @@
-# JSONMatcher
+# EasyJSONMatcher
 This project rocks (well, hopefully!) and uses MIT-LICENSE.
 
 version 0.0.0
