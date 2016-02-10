@@ -1,8 +1,8 @@
-require 'jsonapi_matcher'
+require 'jsonapi_matcher/validator'
 module JSONAPIMatcher
   class BooleanValidator < Validator
     def _validate
-      clazz = json.class
+      clazz = content.class
       (clazz == TrueClass) || (clazz == FalseClass)
     end
   end

@@ -16,13 +16,13 @@ module JSONAPIMatcher
     end
 
     def _validate_as_string
-      string_validator.valid? json
+      string_validator.valid? content
     end
 
     def _validate_as_date
       require 'date'
       begin
-        Date.strptime(json, date_format)
+        Date.strptime(content, date_format)
       rescue ArgumentError
         false
       end

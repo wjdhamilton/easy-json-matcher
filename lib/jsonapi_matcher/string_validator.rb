@@ -1,8 +1,9 @@
+require 'jsonapi_matcher/validator'
 module JSONAPIMatcher
   class StringValidator < Validator
 
   def _validate
-    json.is_a? String  
+    content.is_a? String
   end
 
   end

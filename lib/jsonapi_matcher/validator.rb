@@ -1,14 +1,21 @@
 module JSONAPIMatcher
   class Validator
 
-    attr_reader :json
+    attr_reader :content
+    attr_reader :key
 
-    def initialize(opts = {})
+    def initialize(options: {})
+      @key = options[:key]
     end
 
     def valid?(candidate)
-      @json = candidate
+      _set_content(candidate)
       _validate
     end
+
+    def _set_content(candidate)
+      @content = key ? candidate[key.to_s] : candidate
+    end
+
   end
 end

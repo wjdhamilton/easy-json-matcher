@@ -11,13 +11,14 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
       schema.contains_node(key: :data) do |node|
         node.has_attribute(key: :title, opts: {type: :string})
       end
-    }.register(name: :test)
+    }.register(schema_name: :test)
 
     valid_json = {
                      data: {
                           'title'=> "Here's a title"
                           }
                     }.to_json
+    byebug
     assert(test_schema.valid? valid_json)
   end
 
@@ -138,7 +139,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   # we just want to check that there is a key available. It makes sense, therefore,
   # to reverse the dependency such that the Node instance is passed to the Validator
   # with its key and it then tests for the presence of the attribute and what it
-  # whether or not it is available 
+  # whether or not it is available
   test "As a user I want to validate json value attributes" do
       test_schema = JSONAPIMatcher::SchemaGenerator.new {|schema|
         schema.has_attribute(key: :array,    opts: {type: :value})
@@ -175,7 +176,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
 
     JSONAPIMatcher::SchemaGenerator.new { |schema|
       schema.has_attribute(key: :ignore_me, opts: {type: :value})
-    }.register(name: :test)
+    }.register(schema_name: :test)
 
     assert(JSONAPIMatcher.available_schemas.include?(:test), ":test not found in available_nodes")
   end
