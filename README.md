@@ -1,29 +1,29 @@
-# JSONAPIMatcher
+# JSONMatcher
 This project rocks (well, hopefully!) and uses MIT-LICENSE.
 
 version 0.0.0
 
-This gem will assist developers who want to test that their API conforms to the JSONAPI schema (http://jsonapi.org/format/). 
+This gem will assist developers who want to test that their API conforms to a given JSON schema
 
-Basically, the idea is as follows: 
+Basically, the idea is as follows:
 
 * Create a schema template to match the intended output of your JSONApi
 * Create an integration test that calls your api
 * Check that the response complies with the schema.
 
-This means that the developer should only have to create a template that specifies what the api should produce, and then test that it does. 
+This means that the developer should only have to create a template that specifies what the api should produce, and then test that it does.
 
 The matcher should ensure that all the JSONApi standards are adhered to.
 
-The gem should also allow the nesting of schemas, to avoid code reuse. 
+The gem should also allow the nesting of schemas, to avoid code reuse.
 
 
 Take the example response from the JSONAPi website's front page:
 
 ```ruby
-JSONAPIMatcher::Schema.new :article do
-   
-    links :true 
+JSONMatcher::Schema.new :article do
+
+    links :true
 
     data do
 	attributes {title: {type: :string, mandatory: :true}}

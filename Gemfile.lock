@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jsonapi_matcher (0.0.1)
+    json_matcher (0.0.1)
       rails (~> 4.2.5.1)
 
 GEM
@@ -112,7 +112,7 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
-  jsonapi_matcher!
+  json_matcher!
   mocha
   pretty_backtrace
   sqlite3

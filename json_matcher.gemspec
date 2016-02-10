@@ -1,17 +1,17 @@
 $:.push File.expand_path("../lib", __FILE__)
 
 # Maintain your gem's version:
-require "jsonapi_matcher/version"
+require "json_matcher/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "jsonapi_matcher"
+  s.name        = "json_matcher"
   s.version     = JsonapiMatcher::VERSION
   s.authors     = ["WJD Hamilton"]
   s.email       = ["wjdhamilton@hotmail.co.uk"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of JsonapiMatcher."
-  s.description = "TODO: Description of JsonapiMatcher."
+  s.homepage    = ""
+  s.summary     = "Easily test your JSON output with templates and Schemas"
+  s.description = "TBC: Description of JsonapiMatcher."
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]

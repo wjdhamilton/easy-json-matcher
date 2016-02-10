@@ -1,7 +1,7 @@
-require 'jsonapi_matcher'
-require 'jsonapi_matcher/validator_factory'
+require 'json_matcher'
+require 'json_matcher/validator_factory'
 require 'json'
-require 'jsonapi_matcher/content_wrapper'
+require 'json_matcher/content_wrapper'
 module JSONAPIMatcher
   class Node < Validator
     extend Forwardable

@@ -1,5 +1,5 @@
-require 'jsonapi_matcher/node'
-require 'jsonapi_matcher/schema_generator'
+require 'json_matcher/node'
+require 'json_matcher/schema_generator'
 module JSONAPIMatcher
 
     SCHEMAS = {}
