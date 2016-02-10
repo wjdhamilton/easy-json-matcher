@@ -95,15 +95,80 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
 
     assert(test_schema.valid?(valid_json), "Date was not validated")
 
+    not_a_date = 'Good Night Mr. Tom'
     invalid_json = {
-      date: "Good night Mr. Tom"
+      date: not_a_date
     }.to_json
 
-    assert_not(test_schema.valid?(invalid_json), "\"Good night Mr. Tom\" should not have been validated as a date")
+    assert_not(test_schema.valid?(invalid_json), "\"#{not_a_date}\" should not have been validated as a date")
   end
 
   test "As a user I want to be able to use different types of date format" do
     flunk "Implement me"
+  end
+
+  test "As a user I want to validate object values" do
+    test_schema = JSONAPIMatcher::SchemaGenerator.new { |schema|
+      schema.has_attribute(key: :object, opts: {type: :object})
+    }.generate_node
+
+    is_an_object = {}
+
+    valid_json = {
+      object: is_an_object
+    }.to_json
+
+    assert(test_schema.valid?(valid_json),"#{is_an_object} was not validated as an object" )
+
+    not_an_object = "Popular Music"
+
+    invalid_json = {
+      object: not_an_object
+    }
+
+    assert_not(test_schema.valid?(invalid_json), "#{not_an_object} should not have validated as an object")
+  end
+
+  # Refers to validation of a JSON value attribute. This one is slightly tricky
+  # though since attempting to access a Ruby Hash with a missing key will return
+  # nil. The ValueValidator (or indeed any Validator) will accept nil as a value.
+  # However, if in future we want to implement the :required option then in the
+  # case of ValueValidator we will be stuck because for all of the other Validator
+  # classes nil indicates a missing value, but in the case of the ValueValidator
+  # we just want to check that there is a key available. It makes sense, therefore,
+  # to reverse the dependency such that the Node instance is passed to the Validator
+  # with its key and it then tests for the presence of the attribute and what it
+  # whether or not it is available 
+  test "As a user I want to validate json value attributes" do
+      test_schema = JSONAPIMatcher::SchemaGenerator.new {|schema|
+        schema.has_attribute(key: :array,    opts: {type: :value})
+        schema.has_attribute(key: :boolean,  opts: {type: :value})
+        schema.has_attribute(key: :date, opts: {type: :value})
+        schema.has_attribute(key: :number, opts: {type: :value})
+        schema.has_attribute(key: :object, opts: {type: :value})
+        schema.has_attribute(key: :string, opts: {type: :value})
+        schema.has_attribute(key: :null, opts: {type: :value})
+      }.generate_node
+
+
+      valid_json = {
+        array: [],
+        boolean: true,
+        date: Date.today,
+        number: 1.11,
+        object: {},
+        string: 'The Tenderness of Wolves',
+        null: nil
+      }.to_json
+
+      assert(test_schema.valid?(valid_json), 'Value did not validate')
+
+      invalid_json = {
+
+      }.to_json
+
+      assert_not(test_schema.valid?(valid_json), 'Empty object passed value validation')
+
   end
 
   test "As a user I want to be able to register a Schema so I can reuse it later" do
