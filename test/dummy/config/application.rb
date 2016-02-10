@@ -3,7 +3,7 @@ require File.expand_path('../boot', __FILE__)
 require 'rails/all'
 
 Bundler.require(*Rails.groups)
-require "json_matcher"
+require "easy_json_matcher"
 
 module Dummy
   class Application < Rails::Application

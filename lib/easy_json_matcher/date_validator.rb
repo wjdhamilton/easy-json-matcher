@@ -1,5 +1,5 @@
-require 'json_matcher/validator'
-module JSONAPIMatcher
+require 'easy_json_matcher/validator'
+module EasyJSONMatcher
   class DateValidator < Validator
 
     attr_reader :string_validator, :date_format

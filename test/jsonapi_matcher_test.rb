@@ -7,7 +7,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   test "As a user I want to create new Schemas to match JSON objects" do
     # This test represents the minimum level of implementation required to create a
     # working node.
-    test_schema = JSONAPIMatcher::SchemaGenerator.new { |schema|
+    test_schema = EasyJSONMatcher::SchemaGenerator.new { |schema|
       schema.contains_node(key: :data) do |node|
         node.has_attribute(key: :title, opts: {type: :string})
       end
@@ -24,7 +24,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
 
   test "As a user I want to be able to validate numbers" do
 
-    test_schema = JSONAPIMatcher::SchemaGenerator.new {|schema|
+    test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
       schema.has_attribute(key: :number, opts: {type: :number})
     }.generate_node
 
@@ -42,7 +42,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
 
   test "As a user I want to be able to validate booleans" do
 
-    test_schema = JSONAPIMatcher::SchemaGenerator.new {|schema|
+    test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
       schema.has_attribute(key: :true, opts: {type: :boolean})
       schema.has_attribute(key: :false, opts: {type: :boolean})
     }.generate_node
@@ -63,7 +63,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   end
 
   test "As a user I want to be able to validate Array values" do
-    test_schema = JSONAPIMatcher::SchemaGenerator.new {|schema|
+    test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
       schema.has_attribute(key: :array, opts: {type: :array})
     }.generate_node
 
@@ -85,7 +85,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   end
 
   test "As a user I want to be able to validate date values" do
-    test_schema = JSONAPIMatcher::SchemaGenerator.new { |schema|
+    test_schema = EasyJSONMatcher::SchemaGenerator.new { |schema|
       schema.has_attribute(key: :date, opts: {type: :date})
     }.generate_node
 
@@ -108,7 +108,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   end
 
   test "As a user I want to validate object values" do
-    test_schema = JSONAPIMatcher::SchemaGenerator.new { |schema|
+    test_schema = EasyJSONMatcher::SchemaGenerator.new { |schema|
       schema.has_attribute(key: :object, opts: {type: :object})
     }.generate_node
 
@@ -140,7 +140,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   # with its key and it then tests for the presence of the attribute and what it
   # whether or not it is available
   test "As a user I want to validate json value attributes" do
-      test_schema = JSONAPIMatcher::SchemaGenerator.new {|schema|
+      test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
         schema.has_attribute(key: :array,    opts: {type: :value})
         schema.has_attribute(key: :boolean,  opts: {type: :value})
         schema.has_attribute(key: :date, opts: {type: :value})
@@ -169,7 +169,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   end
 
   test "As a user I want to validate nested json objects" do
-    test_schema = JSONAPIMatcher::SchemaGenerator.new {|schema|
+    test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
       schema.has_attribute(key: :level_1_attribute, opts: {type: :number})
       schema.contains_node(key: :level_2) do |n|
         n.has_attribute(key: :level_2_attribute, opts: {type: :number})
@@ -194,11 +194,11 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
 
   test "As a user I want to be able to register a Schema so I can reuse it later" do
 
-    JSONAPIMatcher::SchemaGenerator.new { |schema|
+    EasyJSONMatcher::SchemaGenerator.new { |schema|
       schema.has_attribute(key: :ignore_me, opts: {type: :value})
     }.register(schema_name: :test)
 
-    assert(JSONAPIMatcher.available_schemas.include?(:test), ":test not found in available_nodes")
+    assert(EasyJSONMatcher.available_schemas.include?(:test), ":test not found in available_nodes")
   end
 
 
@@ -206,11 +206,11 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
 
     class Validator
       def valid?(json)
-        raise JSONAPIMatcher::ValidationError.new ("Oops!!")
+        raise EasyJSONMatcher::ValidationError.new ("Oops!!")
       end
     end
 
-    test_schema = JSONAPIMatcher::SchemaGenerator.new { |schema|
+    test_schema = EasyJSONMatcher::SchemaGenerator.new { |schema|
       schema.has_attribute(key: :oops, opts: {type: :value})
       schema.contains_node(key: :nested_oops) do |node|
         node.has_attribute(key: :bigger_oops, opts: {type: :value})

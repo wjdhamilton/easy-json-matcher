@@ -1,11 +1,11 @@
 $:.push File.expand_path("../lib", __FILE__)
 
 # Maintain your gem's version:
-require "json_matcher/version"
+require "easy_json_matcher/version"
 
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
-  s.name        = "json_matcher"
+  s.name        = "easy_easy_json_matcher"
   s.version     = JsonapiMatcher::VERSION
   s.authors     = ["WJD Hamilton"]
   s.email       = ["wjdhamilton@hotmail.co.uk"]

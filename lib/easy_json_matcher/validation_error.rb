@@ -1,4 +1,4 @@
-module JSONAPIMatcher
+module EasyJSONMatcher
   class ValidationError < Error
 
     def initialize(error_details)

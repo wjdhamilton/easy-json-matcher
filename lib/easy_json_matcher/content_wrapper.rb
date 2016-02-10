@@ -1,4 +1,4 @@
-module JSONAPIMatcher
+module EasyJSONMatcher
   class ContentWrapper
 
     attr_reader :content

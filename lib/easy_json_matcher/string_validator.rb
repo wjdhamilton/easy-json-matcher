@@ -1,5 +1,5 @@
-require 'json_matcher/validator'
-module JSONAPIMatcher
+require 'easy_json_matcher/validator'
+module EasyJSONMatcher
   class StringValidator < Validator
 
   def _validate

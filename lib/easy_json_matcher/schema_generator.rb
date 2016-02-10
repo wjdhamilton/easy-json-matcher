@@ -1,6 +1,6 @@
-require 'json_matcher/validator_factory'
-require 'json_matcher/node'
-module JSONAPIMatcher
+require 'easy_json_matcher/validator_factory'
+require 'easy_json_matcher/node'
+module EasyJSONMatcher
   class SchemaGenerator
 
     attr_reader :node
@@ -39,7 +39,7 @@ module JSONAPIMatcher
     end
 
     def register(schema_name:)
-      JSONAPIMatcher.add_schema(name: schema_name, schema: generate_node)
+      EasyJSONMatcher.add_schema(name: schema_name, schema: generate_node)
     end
 
     def node

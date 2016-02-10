@@ -1,4 +1,4 @@
-module JSONAPIMatcher
+module EasyJSONMatcher
   class Validator
 
     attr_reader :content, :key
