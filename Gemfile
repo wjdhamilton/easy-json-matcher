@@ -14,4 +14,5 @@ gemspec
 group :development, :test do
   gem 'pretty_backtrace'
   gem 'byebug'
+  gem 'mocha'
 end

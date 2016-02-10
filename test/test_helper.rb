@@ -1,3 +1,5 @@
+require 'pretty_backtrace/enable'
+require 'mocha/mini_test'
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"
 
