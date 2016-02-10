@@ -1,6 +1,6 @@
 # Asserts that a value is a double-precision floating point number in javascript format
 require 'easy_json_matcher/validator'
-module JSONAPIMatcher
+module EasyJSONMatcher
   class NumberValidator < Validator
     def _validate
       begin

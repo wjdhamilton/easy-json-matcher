@@ -2,7 +2,7 @@ require 'easy_json_matcher'
 require 'easy_json_matcher/validator_factory'
 require 'json'
 require 'easy_json_matcher/content_wrapper'
-module JSONAPIMatcher
+module EasyJSONMatcher
   class Node < Validator
     extend Forwardable
 

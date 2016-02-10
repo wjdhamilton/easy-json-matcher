@@ -1,6 +1,6 @@
 require 'easy_json_matcher/node'
 require 'easy_json_matcher/schema_generator'
-module JSONAPIMatcher
+module EasyJSONMatcher
 
     SCHEMAS = {}
     private_constant :SCHEMAS

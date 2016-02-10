@@ -5,7 +5,7 @@ require 'easy_json_matcher/date_validator'
 require 'easy_json_matcher/boolean_validator'
 require 'easy_json_matcher/array_validator'
 require 'easy_json_matcher/value_validator'
-module JSONAPIMatcher
+module EasyJSONMatcher
   class ValidatorFactory
 
     class << self
