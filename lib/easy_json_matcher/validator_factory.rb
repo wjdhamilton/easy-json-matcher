@@ -1,10 +1,10 @@
-require 'json_matcher/object_validator'
-require 'json_matcher/string_validator'
-require 'json_matcher/number_validator'
-require 'json_matcher/date_validator'
-require 'json_matcher/boolean_validator'
-require 'json_matcher/array_validator'
-require 'json_matcher/value_validator'
+require 'easy_json_matcher/object_validator'
+require 'easy_json_matcher/string_validator'
+require 'easy_json_matcher/number_validator'
+require 'easy_json_matcher/date_validator'
+require 'easy_json_matcher/boolean_validator'
+require 'easy_json_matcher/array_validator'
+require 'easy_json_matcher/value_validator'
 module JSONAPIMatcher
   class ValidatorFactory
 
