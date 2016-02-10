@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.version     = JsonapiMatcher::VERSION
   s.authors     = ["WJD Hamilton"]
   s.email       = ["wjdhamilton@hotmail.co.uk"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of JsonapiMatcher."
-  s.description = "TODO: Description of JsonapiMatcher."
+  s.homepage    = ""
+  s.summary     = "Easily test your JSON output with templates and Schemas"
+  s.description = "TBC: Description of JsonapiMatcher."
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
