@@ -1,5 +1,5 @@
-require 'jsonapi_matcher/validator_factory'
-require 'jsonapi_matcher/node'
+require 'json_matcher/validator_factory'
+require 'json_matcher/node'
 module JSONAPIMatcher
   class SchemaGenerator
 

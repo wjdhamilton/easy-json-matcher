@@ -1,4 +1,4 @@
 # desc "Explaining what the task does"
-# task :jsonapi_matcher do
+# task :json_matcher do
 #   # Task goes here
 # end
