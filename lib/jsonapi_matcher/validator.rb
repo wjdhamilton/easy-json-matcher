@@ -17,5 +17,10 @@ module JSONAPIMatcher
       @content = key ? candidate[key.to_s] : candidate
     end
 
+    def _access_content(key)
+      key = key.to_s
+      content[key]
+    end
+
   end
 end
