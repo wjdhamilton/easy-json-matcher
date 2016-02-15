@@ -14,10 +14,10 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
     }.register(schema_name: :test)
 
     valid_json = {
-                     data: {
-                          'title'=> "Here's a title"
-                          }
-                    }.to_json
+                   data: {
+                        'title'=> "here's a title"
+                        }
+                  }.to_json
     assert(test_schema.valid? valid_json)
   end
 
