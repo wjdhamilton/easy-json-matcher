@@ -10,7 +10,9 @@ module EasyJSONMatcher
 
     def valid?(candidate)
       _set_content(candidate)
-      return false unless _check_required
+      if content.nil?
+        return true unless _check_required?
+      end
       _validate
     end
 
@@ -18,10 +20,8 @@ module EasyJSONMatcher
       @content = key ? candidate[key.to_s] : candidate
     end
 
-    def _check_required
-      return true unless required
-      byebug
-      return true if content
+    def _check_required?
+      required
     end
   end
 end
