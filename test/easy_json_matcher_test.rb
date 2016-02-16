@@ -57,8 +57,9 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
     invalid_json = {
       true: 1,
       false: "wibble"
-    }
+    }.to_json
 
+    # byebug
     assert_not(test_schema.valid?(invalid_json), "\"1\" and \"wibble\" are not valid boolean values")
   end
 
@@ -124,7 +125,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
 
     invalid_json = {
       object: not_an_object
-    }
+    }.to_json
 
     assert_not(test_schema.valid?(invalid_json), "#{not_an_object} should not have validated as an object")
   end
