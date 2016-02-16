@@ -1,7 +1,8 @@
 module EasyJSONMatcher
   class Validator
 
-    attr_reader :content, :key, :required
+    attr_reader :content, :required
+    attr_accessor :key
 
     def initialize(options: {})
       @key = options[:key]
