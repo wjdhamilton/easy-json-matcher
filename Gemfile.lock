@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    easy_json_matcher (0.0.1)
+    easy_json_matcher (0.0.2)
       rails (~> 4.2.5.1)
 
 GEM

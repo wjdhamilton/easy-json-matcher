@@ -193,16 +193,6 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
     assert(test_schema.valid?(valid_json), "Nested JSON was not correctly validated")
   end
 
-  test "As a user I want to be able to register a Schema so I can reuse it later" do
-
-    EasyJSONMatcher::SchemaGenerator.new { |schema|
-      schema.has_attribute(key: :ignore_me, opts: {type: :value})
-    }.register(schema_name: :test)
-
-    assert(EasyJSONMatcher.available_schemas.include?(:test), ":test not found in available_nodes")
-  end
-
-
   test "As a user I want to know why my json was not valid" do
 
     class Validator
