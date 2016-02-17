@@ -9,9 +9,13 @@ module EasyJSONMatcher
   class ValidatorFactory
 
     class << self
-      def create(opts)
-        validator_class = get_type(opts[:type])
-        validator_class.new options: opts
+      def get_instance(type:, opts: {})
+        if type == :schema
+          SchemaLibrary.get_schema(opts[:name])
+        else
+          validator_class = get_type(type)
+          validator_class.new options: opts
+        end
       end
 
       def get_type(name)

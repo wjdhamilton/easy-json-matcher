@@ -20,13 +20,20 @@ module EasyJSONMatcher
     end
 
     def has_attribute(key:, opts: {})
-      node.add_validator(_create_validator(_validator_opts(key, opts)))
+      node.add_validator(_create_validator(key, opts))
     end
 
     def contains_schema(schema_name:, opts: {})
-      schema = SchemaLibrary.get_schema(schema_name)
+      schema = _create_validator(schema_name, opts)
       schema.key = opts[:key] || schema_name
       node.add_validator schema
+    end
+
+    def contains_array(key:, opts: {})
+      opts.merge!({type: :array})
+      array_validator = _create_validator(key, opts)
+      yield array_validator if block_given?
+      node.add_validator array_validator
     end
 
     def _validator_opts(key, opts)
@@ -34,8 +41,8 @@ module EasyJSONMatcher
       opts
     end
 
-    def _create_validator(opts)
-      ValidatorFactory.create opts
+    def _create_validator(key, opts)
+      ValidatorFactory.get_instance type: opts[:type], opts: _validator_opts(key, opts)
     end
 
     def _node_generator(opts = {})

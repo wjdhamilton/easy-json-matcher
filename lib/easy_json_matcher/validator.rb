@@ -24,5 +24,9 @@ module EasyJSONMatcher
     def _check_required?
       required
     end
+
+    def _create_validator(type:, opts: {})
+      ValidatorFactory.get_instance(type: type, opts: opts)
+    end
   end
 end
