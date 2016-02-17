@@ -22,7 +22,13 @@ module EasyJSONMatcher
       end
 
       def get_schema(name)
-        SCHEMAS[name] or raise MissingSchemaException.new("No schema with #{name} has been registered")
+         _find_and_clone_schema(name) or raise MissingSchemaException.new("No schema with #{name} has been registered")
+      end
+
+      def _find_and_clone_schema(name)
+        s = SCHEMAS[name]
+        return s.dup if s
+        nil
       end
     end
   end

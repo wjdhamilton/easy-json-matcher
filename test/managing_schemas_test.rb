@@ -45,4 +45,24 @@ class ManagingSchemasTest < ActiveSupport::TestCase
     valid_json = valid_json.to_json
     assert(test_schema.valid?(valid_json), "Stored schema did not validate correctly")
   end
+
+  test "It can validate JSON Schema payloads" do
+    EasyJSONMatcher::SchemaGenerator.new { |country|
+      country.has_attribute key: :id,      opts: {type: :number, required: true}
+      country.contains_node(key: :attributes) do |atts|
+        atts.has_attribute key: :alpha_2,  opts: {type: :string, required: true}
+        atts.has_attribute key: :alpha_3,  opts: {type: :string, required: true}
+        atts.has_attribute key: :name,     opts: {type: :string, required: true}
+      end
+    }.register(schema_name: :country)
+
+    EasyJSONMatcher::SchemaGenerator.new {|country_payload|
+      country_payload.contains_schema(schema_name: :country, opts: {key: :data})
+    }.register(schema_name: :country_payload)
+
+    valid_json = "{\"data\":{\"id\":\"4376\",\"type\":\"countries\",\"attributes\":{\"alpha_2\":\"GB\",\"alpha_3\":\"GBR\",\"name\":\"United Kingdom of Great Britain and Northern Ireland\"}}}"
+
+    validator = EasyJSONMatcher::SchemaLibrary.get_schema(:country_payload)
+    assert(validator.valid? valid_json)
+  end
 end
