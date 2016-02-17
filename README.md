@@ -1,7 +1,7 @@
 # EasyJSONMatcher
 This project rocks (well, hopefully!) and uses MIT-LICENSE.
 
-version 0.0.0
+version 0.0.2
 
 This gem will assist developers who want to test that their API conforms to a given JSON schema
 
@@ -21,7 +21,7 @@ The gem should also allow the nesting of schemas, to avoid code reuse.
 Take the example response from the JSONAPi website's front page:
 
 ```ruby
-JSONMatcher::Schema.new :article do
+EasyJSONMatcher::SchemaGenerator.new :article do
 
     links :true
 

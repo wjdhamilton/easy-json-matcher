@@ -8,7 +8,7 @@ module EasyJSONMatcher
     def initialize(opts = {})
       super(opts)
       @date_format = opts[:format]
-      @string_validator = ValidatorFactory.create({type: :string})
+      @string_validator = _create_validator(type: :string)
     end
 
     def _validate

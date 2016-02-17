@@ -81,10 +81,6 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
     assert(!test_schema.valid?(invalid_json), "\"1\" is not a valid array value")
   end
 
-  test "As a user I want to be able to specify what should be found in an array" do
-    flunk "Implement me"
-  end
-
   test "As a user I want to be able to validate date values" do
     test_schema = EasyJSONMatcher::SchemaGenerator.new { |schema|
       schema.has_attribute(key: :date, opts: {type: :date})
