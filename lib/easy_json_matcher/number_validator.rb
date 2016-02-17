@@ -6,7 +6,9 @@ module EasyJSONMatcher
       begin
         Kernel::Float(content)
         true
-      rescue ArgumentError => e
+      rescue ArgumentError
+        false
+      rescue TypeError
         false
       end
     end

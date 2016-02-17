@@ -10,6 +10,7 @@ module EasyJSONMatcher
 
     class << self
       def get_instance(type:, opts: {})
+        raise "Type must be specified" unless type
         if type == :schema
           SchemaLibrary.get_schema(opts[:name])
         else

@@ -24,9 +24,20 @@ module EasyJSONMatcher
     end
 
     def contains_schema(schema_name:, opts: {})
-      schema = _create_validator(schema_name, opts)
-      schema.key = opts[:key] || schema_name
+      key = opts[:key] || schema_name
+      schema = _create_validator(key, _prep_schema_opts(schema_name, opts))
+      _set_validator_key(schema, opts[:key] || schema_name)
       node.add_validator schema
+    end
+
+    def _prep_schema_opts(schema_name, opts)
+      opts[:type] = :schema
+      opts[:name] = schema_name
+      opts
+    end
+
+    def _set_validator_key(validator, key)
+      validator.key = key
     end
 
     def contains_array(key:, opts: {})

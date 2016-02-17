@@ -25,7 +25,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   test "As a user I want to be able to validate numbers" do
 
     test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
-      schema.has_attribute(key: :number, opts: {type: :number})
+      schema.has_attribute(key: :number, opts: {type: :number, required: :true})
     }.generate_node
 
     valid_json = {
@@ -38,6 +38,11 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
       number: "hi"
     }.to_json
     assert_not(test_schema.valid?(invalid_json), "\"hi\" should not have been valid")
+
+    invalid_nil = {
+      number: nil
+    }.to_json
+    assert_not(test_schema.valid?(invalid_nil), "#{invalid_nil} should not have validated, or thrown an error")
   end
 
   test "As a user I want to be able to validate booleans" do
