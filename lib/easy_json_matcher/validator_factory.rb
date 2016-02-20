@@ -12,7 +12,7 @@ module EasyJSONMatcher
       def get_instance(type:, opts: {})
         raise "Type must be specified" unless type
         if type == :schema
-          SchemaLibrary.get_schema(opts[:name])
+          SchemaLibrary.get_schema(name: opts[:name], opts: opts)
         else
           validator_class = get_type(type)
           validator_class.new options: opts
