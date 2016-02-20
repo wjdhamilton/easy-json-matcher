@@ -18,20 +18,20 @@ class ManagingSchemasTest < ActiveSupport::TestCase
       name: 'Green Mandarin'
     }.to_json
 
-    schema = EasyJSONMatcher::SchemaLibrary.get_schema(@name)
+    schema = EasyJSONMatcher::SchemaLibrary.get_schema(name: @name)
     assert(schema.valid?(test_schema), "test_schema did not validate correctly")
   end
 
   test "SchemaLibrary should thrown a MissingSchemaException if an unregistered schema is requested" do
     assert_raises(EasyJSONMatcher::MissingSchemaException) do
-      EasyJSONMatcher::SchemaLibrary.get_schema("#{@name.to_s}-wibble")
+      EasyJSONMatcher::SchemaLibrary.get_schema(name: "#{@name.to_s}-wibble")
     end
   end
 
   test "As a user I want to reuse a schema within another schema" do
     test_schema = EasyJSONMatcher::SchemaGenerator.new { |s|
       s.has_attribute(key: :is_present, opts: {type: :boolean, required: true})
-      s.contains_schema(schema_name: @name)
+      s.has_attribute(key: @name, opts: {name: @name, type: :schema})
     }.generate_node
 
     invalid_json = {
@@ -57,12 +57,12 @@ class ManagingSchemasTest < ActiveSupport::TestCase
     }.register(schema_name: :country)
 
     EasyJSONMatcher::SchemaGenerator.new {|country_payload|
-      country_payload.contains_schema(schema_name: :country, opts: {key: :data})
+      country_payload.has_attribute(key: :data, opts: {name: :country, type: :schema})
     }.register(schema_name: :country_payload)
 
     valid_json = "{\"data\":{\"id\":\"4376\",\"type\":\"countries\",\"attributes\":{\"alpha_2\":\"GB\",\"alpha_3\":\"GBR\",\"name\":\"United Kingdom of Great Britain and Northern Ireland\"}}}"
 
-    validator = EasyJSONMatcher::SchemaLibrary.get_schema(:country_payload)
+    validator = EasyJSONMatcher::SchemaLibrary.get_schema(name: :country_payload)
     assert(validator.valid? valid_json)
   end
 end
