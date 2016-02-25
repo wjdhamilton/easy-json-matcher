@@ -11,8 +11,8 @@ module EasyJSONMatcher
       content[key.to_s]
     end
 
-    def method_missing(method, *args)
-      content.send(method, *args)
+    def method_missing(method, *args, &block)
+      content.send(method, *args, &block)
     end
   end
 end
