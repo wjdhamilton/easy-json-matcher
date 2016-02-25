@@ -194,6 +194,40 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
     assert(test_schema.valid?(valid_json), "Nested JSON was not correctly validated")
   end
 
+  test "As a user, if I specify a node and the content is not a node, it should be invalid without raising an error" do
+    test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
+      schema.has_attribute(key: :fish_name, opts: {type: :string, required: :true})
+      schema.contains_node(key: :scientific_name) do |n|
+        n.has_attribute(key: :genus, opts: {type: :string, required: :true})
+        n.has_attribute(key: :species, opts: {type: :string, required: :true})
+      end
+    }.generate_node
+
+    valid_json = {
+      fish_name: 'Clownfish',
+      scientific_name: {
+        genus: 'Amphiprion',
+        species: 'ocellaris'
+      }
+    }.to_json
+
+    assert(test_schema.valid?(valid_json), "#{valid_json} should have been valid")
+
+    invalid_with_array = {
+      fish_name: 'Green Mandarin',
+      scientific_name: ['Synchiropus', 'splendidus']
+    }.to_json
+
+    assert_not(test_schema.valid?(invalid_with_array), "#{invalid_with_array} should not have been valid as it has an array instead of a node")
+
+    invalid_with_primitive = {
+      fish_name: 'Hawaiian Tang',
+      scientific_name: 'Zebrasoma flavescens'
+    }.to_json
+
+    assert_not(test_schema.valid?(invalid_with_primitive), "#{invalid_with_primitive} shoudl not have been valid as it has a primite instead of a node")
+  end
+
   test "As a user I want to know why my json was not valid" do
 
     class Validator
