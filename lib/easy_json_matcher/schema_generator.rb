@@ -23,6 +23,28 @@ module EasyJSONMatcher
       node.add_validator(_create_validator(key, opts))
     end
 
+    ################ Methods for adding specific attribute types ##############
+
+    def has_boolean(key:, opts: {})
+      has_attribute(key: key, opts: opts.merge({type: :boolean}))
+    end
+
+    def has_number(key: , opts: {})
+      has_attribute(key: key, opts: opts.merge({type: :number}))
+    end
+
+    def has_date(key:, opts: {})
+      has_attribute(key: key, opts: opts.merge({type: :date}))
+    end
+
+    def has_object(key:, opts: {})
+      has_attribute(key: key, opts: opts.merge({type: :object}))
+    end
+
+    def has_value(key, opts: {})
+      has_attribute(key: key, opts: opts.merge({type: :value}))
+    end
+
     def _prep_schema_opts(schema_name, opts)
       opts[:type] = :schema
       opts[:name] = schema_name
