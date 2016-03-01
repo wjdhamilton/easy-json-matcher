@@ -20,6 +20,7 @@ module EasyJSONMatcher
       _validate
     end
 
+    #Hook
     def _validate
       raise NotImplementedError.new "Validators must override _validate"
     end
@@ -48,3 +49,4 @@ module EasyJSONMatcher
       ValidatorFactory.get_instance(type: type, opts: opts)
     end
   end
+end
