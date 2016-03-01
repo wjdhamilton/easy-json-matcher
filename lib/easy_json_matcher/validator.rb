@@ -21,7 +21,7 @@ module EasyJSONMatcher
     end
 
     def _validate
-      raise NotImplementedError.new
+      raise NotImplementedError.new "Validators must override _validate"
     end
 
     # Hook
