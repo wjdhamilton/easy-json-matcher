@@ -25,7 +25,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   test "As a user I want to be able to validate numbers" do
 
     test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
-      schema.has_attribute(key: :number, opts: {type: :number, required: :true})
+      schema.has_number(key: :number, opts: {required: :true})
     }.generate_node
 
     valid_json = {
@@ -48,8 +48,8 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   test "As a user I want to be able to validate booleans" do
 
     test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
-      schema.has_attribute(key: :true, opts: {type: :boolean})
-      schema.has_attribute(key: :false, opts: {type: :boolean})
+      schema.has_boolean(key: :true)
+      schema.has_boolean(key: :false)
     }.generate_node
 
     valid_json = {
@@ -88,7 +88,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
 
   test "As a user I want to be able to validate date values" do
     test_schema = EasyJSONMatcher::SchemaGenerator.new { |schema|
-      schema.has_attribute(key: :date, opts: {type: :date})
+      schema.has_date(key: :date)
     }.generate_node
 
     valid_json = {
@@ -111,7 +111,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
 
   test "As a user I want to validate object values" do
     test_schema = EasyJSONMatcher::SchemaGenerator.new { |schema|
-      schema.has_attribute(key: :object, opts: {type: :object})
+      schema.has_object(key: :object)
     }.generate_node
 
     is_an_object = {}
@@ -133,23 +133,20 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
 
   # Refers to validation of a JSON value attribute. This one is slightly tricky
   # though since attempting to access a Ruby Hash with a missing key will return
-  # nil. The ValueValidator (or indeed any Validator) will accept nil as a value.
-  # However, if in future we want to implement the :required option then in the
-  # case of ValueValidator we will be stuck because for all of the other Validator
-  # classes nil indicates a missing value, but in the case of the ValueValidator
-  # we just want to check that there is a key available. It makes sense, therefore,
-  # to reverse the dependency such that the Node instance is passed to the Validator
-  # with its key and it then tests for the presence of the attribute and what it
-  # whether or not it is available
+  # nil. The ValueValidator (or indeed any Validator) will accept nil as a value
+  # when the value is not marked as required.
+  # ValueValidator we will be stuck because although the other Validator
+  # classes nil indicates a missing value, in the case of the ValueValidator null is
+  # a valid value and we just want to check that there is a key available.
   test "As a user I want to validate json value attributes" do
       test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
-        schema.has_attribute(key: :array,    opts: {type: :value})
-        schema.has_attribute(key: :boolean,  opts: {type: :value})
-        schema.has_attribute(key: :date, opts: {type: :value})
-        schema.has_attribute(key: :number, opts: {type: :value})
-        schema.has_attribute(key: :object, opts: {type: :value})
-        schema.has_attribute(key: :string, opts: {type: :value})
-        schema.has_attribute(key: :null, opts: {type: :value})
+        schema.has_value(key: :array)
+        schema.has_value(key: :boolean)
+        schema.has_value(key: :date)
+        schema.has_value(key: :number)
+        schema.has_value(key: :object)
+        schema.has_value(key: :string)
+        schema.has_value(key: :null)
       }.generate_node
 
 
