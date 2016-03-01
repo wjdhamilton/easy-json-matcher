@@ -1,4 +1,3 @@
-require 'securerandom'
 module EasyJSONMatcher
   class Validator
 
@@ -14,11 +13,15 @@ module EasyJSONMatcher
       if key
         return false unless _check_content_type(candidate)
       end
-      _set_content(candidate)
+      _set_content(candidate) #Hook
       if content.nil?
         return true unless _check_required?
       end
       _validate
+    end
+
+    def _validate
+      raise NotImplementedError.new "Validators must override _validate"
     end
 
     # Hook
@@ -30,8 +33,7 @@ module EasyJSONMatcher
     # value or an array.
     def _check_content_type(candidate)
       begin
-        dummy_key = SecureRandom.hex(10)
-        candidate[dummy_key]
+        candidate[key]
       rescue TypeError
         return false
       end
@@ -46,4 +48,3 @@ module EasyJSONMatcher
       ValidatorFactory.get_instance(type: type, opts: opts)
     end
   end
-end
