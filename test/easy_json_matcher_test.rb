@@ -22,6 +22,29 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   end
 
 
+  test "As a user I want to be able to validate strings" do
+    test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
+      schema.has_string(key: :string, opts: { required: :true})
+    }.generate_node
+
+    valid_json = {
+      string: "Mrs Mogs Hamilton"
+    }.to_json
+
+    assert(test_schema.valid?(valid_json), 'String was not validated')
+
+    # There isn't really a clear case for the string validator picking up if a
+    # value is not intended to be a string since all json values are effectively
+    # strings, and how is the library to know if the client meant 16 to be passed
+    # as a number or as a string?
+    # invalid_json = {
+    #   string: 16
+    # }.to_json
+    #
+    # assert_not(test_schema.valid?(invalid_json), 'Number was validated as a string')
+  end
+
+
   test "As a user I want to be able to validate numbers" do
 
     test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
