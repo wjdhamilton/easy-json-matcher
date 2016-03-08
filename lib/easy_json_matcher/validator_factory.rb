@@ -41,7 +41,7 @@ module EasyJSONMatcher
       end
 
       def default_validator
-        object_validator
+        value_validator
       end
 
       def object_validator

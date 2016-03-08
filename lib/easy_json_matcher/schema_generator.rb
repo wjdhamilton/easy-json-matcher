@@ -16,7 +16,7 @@ module EasyJSONMatcher
     def contains_node(key:, opts: {})
       generator = _node_generator _validator_opts(key, opts)
       yield generator if block_given?
-      node.add_validator generator.generate_node
+      node.add_validator generator.generate_schema
     end
 
     def has_attribute(key:, opts: {})
@@ -46,7 +46,7 @@ module EasyJSONMatcher
     end
 
     def has_string(key:, opts: {})
-      has_attribute(key: key, opts: opts.merge({type: :value}))
+      has_attribute(key: key, opts: opts.merge({type: :string}))
     end
 
     def contains_array(key:, opts: {})
@@ -58,16 +58,16 @@ module EasyJSONMatcher
 
     ################ Methods for generating the schema #########################
 
-    def generate_node
+    def generate_schema
       node
     end
 
-    def register(schema_name:)
-      SchemaLibrary.add_schema(name: schema_name, schema: generate_node)
-      generate_node
+    def register(as:)
+      SchemaLibrary.add_schema(name: as, schema: generate_schema)
+      generate_schema
     end
 
-    ############# Private methods
+    ################## Private methods #########################################
 
     def _prep_schema_opts(schema_name, opts)
       opts[:type] = :schema

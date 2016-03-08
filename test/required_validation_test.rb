@@ -6,7 +6,7 @@ class RequireValidationTest < ActiveSupport::TestCase
     astronaut_schema = EasyJSONMatcher::SchemaGenerator.new { |s|
       s.has_attribute key: :has_oxygen, opts: {type: :boolean, required: true}
       s.has_attribute key: :name, opts: {type: :string}
-    }.generate_node
+    }.generate_schema
 
     valid_astronaut = {
       has_oxygen: true,
@@ -26,7 +26,7 @@ class RequireValidationTest < ActiveSupport::TestCase
     astronaut_schema = EasyJSONMatcher::SchemaGenerator.new { |s|
       s.has_attribute key: :has_oxygen, opts: {type: :boolean}
       s.has_attribute key: :name, opts: {type: :string}
-    }.generate_node
+    }.generate_schema
 
     valid_astronaut = {
       name: 'Buzz Aldrin'
