@@ -6,7 +6,7 @@ class ManagingSchemasTest < ActiveSupport::TestCase
     @name = :test
     EasyJSONMatcher::SchemaGenerator.new { |schema|
       schema.has_attribute(key: :name, opts: {type: :string, required: true})
-    }.register(schema_name: @name)
+    }.register(as: @name)
   end
 
   test "As a user I want to be able to register a Schema so I can reuse it later" do
@@ -32,7 +32,7 @@ class ManagingSchemasTest < ActiveSupport::TestCase
     test_schema = EasyJSONMatcher::SchemaGenerator.new { |s|
       s.has_attribute(key: :is_present, opts: {type: :boolean, required: true})
       s.has_attribute(key: @name, opts: {name: @name, type: :schema})
-    }.generate_node
+    }.generate_schema
 
     invalid_json = {
       is_present: true,
@@ -54,11 +54,11 @@ class ManagingSchemasTest < ActiveSupport::TestCase
         atts.has_attribute key: :alpha_3,  opts: {type: :string, required: true}
         atts.has_attribute key: :name,     opts: {type: :string, required: true}
       end
-    }.register(schema_name: :country)
+    }.register(as: :country)
 
     EasyJSONMatcher::SchemaGenerator.new {|country_payload|
       country_payload.has_attribute(key: :data, opts: {name: :country, type: :schema})
-    }.register(schema_name: :country_payload)
+    }.register(as: :country_payload)
 
     valid_json = "{\"data\":{\"id\":\"4376\",\"type\":\"countries\",\"attributes\":{\"alpha_2\":\"GB\",\"alpha_3\":\"GBR\",\"name\":\"United Kingdom of Great Britain and Northern Ireland\"}}}"
 

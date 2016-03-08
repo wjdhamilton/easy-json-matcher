@@ -2,6 +2,42 @@ require 'easy_json_matcher/validator'
 module EasyJSONMatcher
   class ArrayValidator < Validator
     attr_reader :validators, :validator_results
+######################### Methods for requiring values by type #################
+
+    def should_only_contain_strings(opts: {})
+      should_only_contain type: :string, opts: opts
+    end
+
+    def should_only_contain_objects(opts: {})
+      should_only_contain type: :object, opts: opts
+    end
+
+    def should_only_contain_values(opts: {})
+      should_only_contain type: :value, opts: opts
+    end
+
+    def should_only_contain_numbers(opts: {})
+      should_only_contain type: :number, opts: opts
+    end
+
+    def should_only_contain_booleans(opts: {})
+      should_only_contain type: :boolean, opts: opts
+    end
+
+    def should_only_contain_dates(opts: {})
+      should_only_contain type: :date, opts: opts
+    end
+
+    def should_only_contain_schema(name:, opts: {})
+      should_only_contain type: :schema, opts: opts.merge({name: name})
+    end
+
+    def should_only_contain(type:,opts: {})
+      _clear_validators
+      _add_validator(_create_validator(type: type, opts: opts))
+    end
+
+######################## Private methods #######################################
 
     def _validate
       return false unless _content_is_array?
@@ -17,11 +53,6 @@ module EasyJSONMatcher
         _run_validator(val)
       end
       _validation_result
-    end
-
-    def should_only_contain(type:,opts: {})
-      _clear_validators
-      _add_validator(_create_validator(type: type, opts: opts))
     end
 
     def _clear_validators

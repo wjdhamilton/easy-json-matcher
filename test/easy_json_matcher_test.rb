@@ -2,7 +2,7 @@ require 'test_helper'
 require 'json'
 
 
-class JsonapiMatcherTest < ActiveSupport::TestCase
+class EasyJSONMatcherTest < ActiveSupport::TestCase
 
   test "As a user I want to create new Schemas to match JSON objects" do
     # This test represents the minimum level of implementation required to create a
@@ -11,7 +11,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
       schema.contains_node(key: :data) do |node|
         node.has_attribute(key: :title, opts: {type: :string})
       end
-    }.register(schema_name: :test)
+    }.register(as: :test)
 
     valid_json = {
                    data: {
@@ -25,7 +25,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   test "As a user I want to be able to validate strings" do
     test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
       schema.has_string(key: :string, opts: { required: :true})
-    }.generate_node
+    }.generate_schema
 
     valid_json = {
       string: "Mrs Mogs Hamilton"
@@ -49,7 +49,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
 
     test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
       schema.has_number(key: :number, opts: {required: :true})
-    }.generate_node
+    }.generate_schema
 
     valid_json = {
       number: 5.55,
@@ -73,7 +73,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
     test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
       schema.has_boolean(key: :true)
       schema.has_boolean(key: :false)
-    }.generate_node
+    }.generate_schema
 
     valid_json = {
       true: true,
@@ -94,7 +94,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   test "As a user I want to be able to validate Array values" do
     test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
       schema.has_attribute(key: :array, opts: {type: :array})
-    }.generate_node
+    }.generate_schema
 
     valid_json = {
       array: []
@@ -112,7 +112,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   test "As a user I want to be able to validate date values" do
     test_schema = EasyJSONMatcher::SchemaGenerator.new { |schema|
       schema.has_date(key: :date)
-    }.generate_node
+    }.generate_schema
 
     valid_json = {
       date: "2015-01-15"
@@ -135,7 +135,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
   test "As a user I want to validate object values" do
     test_schema = EasyJSONMatcher::SchemaGenerator.new { |schema|
       schema.has_object(key: :object)
-    }.generate_node
+    }.generate_schema
 
     is_an_object = {}
 
@@ -170,7 +170,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
         schema.has_value(key: :object)
         schema.has_value(key: :string)
         schema.has_value(key: :null)
-      }.generate_node
+      }.generate_schema
 
 
       valid_json = {
@@ -199,7 +199,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
           n3.has_attribute(key: :level_3_attribute, opts: {type: :number})
         end
       end
-    }.generate_node
+    }.generate_schema
 
     valid_json = {
       level_1_attribute: 1,
@@ -221,7 +221,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
         n.has_attribute(key: :genus, opts: {type: :string, required: :true})
         n.has_attribute(key: :species, opts: {type: :string, required: :true})
       end
-    }.generate_node
+    }.generate_schema
 
     valid_json = {
       fish_name: 'Clownfish',
@@ -261,7 +261,7 @@ class JsonapiMatcherTest < ActiveSupport::TestCase
       schema.contains_node(key: :nested_oops) do |node|
         node.has_attribute(key: :bigger_oops, opts: {type: :value})
       end
-    }.generate_node
+    }.generate_schema
 
     # This JSON only reflects the structure of the above, it's validity is rendered
     # irrelevant by our monkey-patch of Validator
