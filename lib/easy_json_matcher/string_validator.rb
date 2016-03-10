@@ -4,7 +4,12 @@ module EasyJSONMatcher
   class StringValidator < Validator
 
     def _validate
-      content.is_a? String
+      unless content.is_a? String
+        errors << "#{content} is not a String"
+        false
+      else
+        true
+      end
     end
   end
 end
