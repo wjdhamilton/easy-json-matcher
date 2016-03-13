@@ -20,7 +20,7 @@ class ErrorMessagesTest < ActiveSupport::TestCase
       ok: 'ok',
       nested_oops: {
         ok: 'ok',
-        bigger_oops: 2, opts: {required: true}
+        bigger_oops: 2
       }
     }.to_json
 
@@ -39,7 +39,7 @@ class ErrorMessagesTest < ActiveSupport::TestCase
         is not an array, I want to know that the value is not an array" do
 
     test_schema = EasyJSONMatcher::SchemaGenerator.new do |s|
-      s.contains_array(key: :arr, opts: {required: true})
+      s.contains_array(key: :arr)
     end.generate_schema
 
     wrong_type = {
@@ -50,5 +50,55 @@ class ErrorMessagesTest < ActiveSupport::TestCase
     assert_not(test_schema.valid? wrong_type)
 
     assert_match(/.*is not an Array/, test_schema.get_errors[:arr][0])
+  end
+
+  test "As a user, given that I have specified that a boolean should map to a given
+        key and that the actual value is not a boolean, I want to now that the
+        value is not a boolean" do
+
+    test_schema = EasyJSONMatcher::SchemaGenerator.new { |s|
+      s.has_boolean(key: :bool)
+    }.generate_schema
+
+    no_bool = {
+      bool: "false"
+    }
+
+    assert_not(test_schema.valid? no_bool)
+
+    assert_match(/.* is not a Boolean/, test_schema.get_errors[:bool][0])
+  end
+
+  test "As a user, given that I have specified that a date should map to a given key
+        and that the actual value is not a date, I want to be informed that the value
+        is not a date" do
+
+    test_schema = EasyJSONMatcher::SchemaGenerator.new {|s|
+      s.has_date(key: :date)
+    }.generate_schema
+
+     no_date = {
+       date: "hello world"
+     }.to_json
+
+     assert_not(test_schema.valid? no_date)
+
+     assert_match(/.* is not a Date/, test_schema.get_errors[:date][0])
+  end
+
+  test "As a user, given that I have specified that a value should be a number,
+        I want to be informed that the value was not a number" do
+
+    test_schema = EasyJSONMatcher::SchemaGenerator.new {|s|
+      s.has_number(key: :number)
+    }
+
+    no_number = {
+      number: 'six'
+    }
+
+    byebug
+    assert_not(test_schema.valid? no_date)
+    assert_match(/.* is not a Number/, test_schema.get_errors[:number][0])
   end
 end

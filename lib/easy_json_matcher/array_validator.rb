@@ -81,7 +81,7 @@ module EasyJSONMatcher
       @validator_results ||= []
     end
 
-    def _define_errors
+    def _explain_errors
       errors << "#{content} is not an Array" unless _content_is_array?
     end
   end

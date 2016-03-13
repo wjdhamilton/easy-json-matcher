@@ -12,14 +12,14 @@ module EasyJSONMatcher
     end
 
     def _validate
-      _validate_as_string && _validate_as_date
+      _content_is_a_string? && _content_is_a_date?
     end
 
-    def _validate_as_string
+    def _content_is_a_string?
       string_validator.valid? content
     end
 
-    def _validate_as_date
+    def _content_is_a_date?
       require 'date'
       begin
         Date.strptime(content, date_format)
@@ -30,6 +30,11 @@ module EasyJSONMatcher
 
     def date_format
       @date_format || DEFAULT_DATE_FORMAT
+    end
+
+    def _explain_errors
+      errors << "#{content} must be provided as a String for Date validation" unless _content_is_a_string?
+      errors << "#{content} is not a Date" unless _content_is_a_date?
     end
   end
 end

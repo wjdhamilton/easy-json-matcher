@@ -41,7 +41,7 @@ module EasyJSONMatcher
       # Should the method just add errors even if there has been no error? Would
       # avoid undefined method [] for nil:NilClass if you look for a key where
       # there is no error but it would also make the output harder to read...
-      _define_errors
+      _explain_errors
       if errors.length > 0
         error_message[key] = errors
       end
@@ -51,8 +51,8 @@ module EasyJSONMatcher
     # Hook.
     # This method adds error messages to the list of errors when get_errors is called.
     # Default implementation provides a meaningless error message. Should be overriden
-    # by subclasses. 
-    def _define_errors
+    # by subclasses.
+    def _explain_errors
       errors << "#{content} was not valid"
     end
 
