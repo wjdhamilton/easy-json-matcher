@@ -1,12 +1,13 @@
 module EasyJSONMatcher
   class Validator
 
-    attr_reader :content, :required
+    attr_reader :content, :required, :errors
     attr_accessor :key
 
     def initialize(options: {})
       @key = options[:key]
       @required = options[:required]
+      @errors = []
     end
 
     def valid?(candidate)
@@ -15,24 +16,43 @@ module EasyJSONMatcher
       end
       _set_content(candidate) #Hook
       if content.nil?
-        return true unless _check_required?
+         _check_required?
+      else
+        _validate #Hook
       end
-      _validate
+      _no_errors?
     end
 
     #Hook
+    # Protected method that Validators use to implement their validation logic.
+    # Called by #valid?
     def _validate
       raise NotImplementedError.new "Validators must override _validate"
     end
 
     # Hook
+    # Protected method that Validators use to set their content from the candidate.
     def _set_content(candidate)
-      @content = key ? candidate[key.to_s] : candidate
+      @content = key ? candidate[key] : candidate
     end
 
-    # This method makees sure that the candidate is a json object, and not a
+    # Hook.
+    # This method returns the errors that this validator has found in the candidate.
+    def get_errors
+      error_message = {}
+      # Should the method just add errors even if there has been no error? Would
+      # avoid undefined method [] for nil:NilClass if you look for a key where
+      # there is no error but it would also make the output harder to read...
+      error_message[key.to_sym] = errors
+      error_message
+    end
+
+    # This method makees sure that the candidate behaves like a Hash, and not a
     # value or an array.
     def _check_content_type(candidate)
+      # TODO perhaps this should raise an error instead of returning false?
+      # if the value that has arrived at this point doesn't behave like a Hash then it
+      # is in the wrong place.
       begin
         candidate[key]
       rescue TypeError
@@ -42,11 +62,20 @@ module EasyJSONMatcher
     end
 
     def _check_required?
-      required
+      if required
+        errors << "Value was not present"
+        return true
+      else
+        return false
+      end
     end
 
     def _create_validator(type:, opts: {})
       ValidatorFactory.get_instance(type: type, opts: opts)
+    end
+
+    def _no_errors?
+      errors.empty?
     end
   end
 end

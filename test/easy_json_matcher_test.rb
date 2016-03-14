@@ -1,7 +1,8 @@
 require 'test_helper'
 require 'json'
 
-
+# This test suite covers the basic concept of validating that a value is a
+# certain type
 class EasyJSONMatcherTest < ActiveSupport::TestCase
 
   test "As a user I want to create new Schemas to match JSON objects" do
@@ -19,6 +20,17 @@ class EasyJSONMatcherTest < ActiveSupport::TestCase
                         }
                   }.to_json
     assert(test_schema.valid? valid_json)
+  end
+
+  # The first thing the gem ought to do is to check that the JSON candidate is actually JSON
+  test "As a user, if the validation candidate cannot be parsed as JSON, the schema should not be valid" do
+    test_schema = EasyJSONMatcher::SchemaGenerator.new {|s|
+      s.has_number(key: :population_of_china_1970)
+    }.generate_schema
+
+    invalid_json = "'population_of_china_1970' 810000000"
+
+    assert_not(test_schema.valid? invalid_json)
   end
 
 
@@ -246,32 +258,5 @@ class EasyJSONMatcherTest < ActiveSupport::TestCase
     }.to_json
 
     assert_not(test_schema.valid?(invalid_with_primitive), "#{invalid_with_primitive} shoudl not have been valid as it has a primite instead of a node")
-  end
-
-  test "As a user I want to know why my json was not valid" do
-
-    class Validator
-      def valid?(json)
-        raise EasyJSONMatcher::ValidationError.new ("Oops!!")
-      end
-    end
-
-    test_schema = EasyJSONMatcher::SchemaGenerator.new { |schema|
-      schema.has_attribute(key: :oops, opts: {type: :value})
-      schema.contains_node(key: :nested_oops) do |node|
-        node.has_attribute(key: :bigger_oops, opts: {type: :value})
-      end
-    }.generate_schema
-
-    # This JSON only reflects the structure of the above, it's validity is rendered
-    # irrelevant by our monkey-patch of Validator
-    valid_json = {
-      oops: 'oops',
-      nested_oops: {
-        bigger_oops: 'bigger_oops'
-      }
-    }
-    flunk "Implement me"
-
   end
 end
