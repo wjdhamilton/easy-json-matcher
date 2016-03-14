@@ -5,7 +5,7 @@ module EasyJSONMatcher
   class NumberValidator < Validator
 
     def _validate
-      _content_is_a_number?
+      errors << "#{content} is not a Number" unless _content_is_a_number?
     end
 
     def _content_is_a_number?
@@ -17,10 +17,6 @@ module EasyJSONMatcher
       rescue TypeError
         false
       end
-    end
-
-    def _explain_errors
-      errors << "#{content} is not a number"
     end
   end
 end

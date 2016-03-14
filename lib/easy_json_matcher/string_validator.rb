@@ -6,15 +6,11 @@ module EasyJSONMatcher
     def _validate
       # Could possible have a meta-method here that takes a list of symbols representing validator names
       # and executes them in the validator of self.
-      _valid_type?
+      _content_is_a_string?
     end
 
-    def _explain_errors
-      errors << "#{content} is not a String" unless _valid_type?
-    end
-
-    def _valid_type?
-      content.is_a? String
+    def _content_is_a_string?
+      errors << "#{content} is not a String" unless content.is_a? String
     end
   end
 end

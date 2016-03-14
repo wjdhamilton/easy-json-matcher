@@ -44,7 +44,7 @@ class ErrorMessagesTest < ActiveSupport::TestCase
 
     wrong_type = {
       arr: "This not an array"
-    }
+    }.to_json
 
     #As above just check that the validator is actually behaving itself
     assert_not(test_schema.valid? wrong_type)
@@ -62,7 +62,7 @@ class ErrorMessagesTest < ActiveSupport::TestCase
 
     no_bool = {
       bool: "false"
-    }
+    }.to_json
 
     assert_not(test_schema.valid? no_bool)
 
@@ -91,14 +91,14 @@ class ErrorMessagesTest < ActiveSupport::TestCase
 
     test_schema = EasyJSONMatcher::SchemaGenerator.new {|s|
       s.has_number(key: :number)
-    }
+    }.generate_schema
 
     no_number = {
       number: 'six'
-    }
+    }.to_json
 
-    byebug
-    assert_not(test_schema.valid? no_date)
+
+    assert_not(test_schema.valid? no_number)
     assert_match(/.* is not a Number/, test_schema.get_errors[:number][0])
   end
 end

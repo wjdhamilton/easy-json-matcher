@@ -23,7 +23,7 @@ module EasyJSONMatcher
 
       def get_schema(name:, opts: {})
          schema = _find_and_clone_schema(name) or raise MissingSchemaException.new("No schema with #{name} has been registered")
-        _set_schema_key(schema, opts[:key])
+        _set_schema_key(schema, opts.delete(:key))
         schema
       end
 

@@ -41,7 +41,7 @@ module EasyJSONMatcher
       has_attribute(key: key, opts: opts.merge({type: :object}))
     end
 
-    def has_value(key, opts: {})
+    def has_value(key:, opts: {})
       has_attribute(key: key, opts: opts.merge({type: :value}))
     end
 
@@ -54,6 +54,10 @@ module EasyJSONMatcher
       array_validator = _create_validator(key, opts)
       yield array_validator if block_given?
       node.add_validator array_validator
+    end
+
+    def has_schema(key:, opts: {})
+      has_attribute(key: key, opts: opts.merge({type: :schema}))
     end
 
     ################ Methods for generating the schema #########################

@@ -5,15 +5,14 @@ require 'easy_json_matcher/content_wrapper'
 require 'forwardable'
 module EasyJSONMatcher
   class Node < Validator
-    extend Forwardable
+    include ContentWrapper
 
-    attr_reader :validators
-
-    def_delegators :content, :[]
+    attr_reader :validators, :validity
 
     def initialize(opts: {})
       super(options: opts)
       @validators = []
+      @validity = true
     end
 
     def add_validator(validator)
@@ -21,11 +20,9 @@ module EasyJSONMatcher
     end
 
     def _validate
-      validity = true
       validators.each do |val|
-        validity = false unless _use_validator val
+        @validity = false unless _use_validator val
       end
-      validity
     end
 
     def _use_validator(validator)
@@ -33,7 +30,7 @@ module EasyJSONMatcher
     end
 
     def _get_content_for(key)
-      content[key.to_s]
+      content[key]
     end
 
     def _get_validator_for(key)
@@ -41,8 +38,7 @@ module EasyJSONMatcher
     end
 
     def _set_content(candidate)
-      candidate = _prep_candidate(candidate)
-      @content = _is_root? ? candidate : candidate[key]
+      @content = _is_root? ? _prep_root_content(candidate) : candidate[key]
     end
 
     def _is_root?
@@ -51,7 +47,7 @@ module EasyJSONMatcher
 
     def get_errors
       child_errors = _collect_child_errors
-      _prep_errors(child_errors)
+      _wrap_errors(child_errors)
     end
 
     def _collect_child_errors
@@ -60,7 +56,7 @@ module EasyJSONMatcher
       end
     end
 
-    def _prep_errors(child_errors)
+    def _wrap_errors(child_errors)
       unless _is_root?
         errors_wrapper = {}
         errors_wrapper[key] = child_errors
@@ -70,17 +66,14 @@ module EasyJSONMatcher
       end
     end
 
-    def _prep_candidate(json)
-      if json.is_a? String
-        _wrap_content(JSON.parse(json))
-      else
-        raise ArgumentError.new "Content for validation must be either a Hash or a String - you supplied #{json}, which is a #{json.class.name}" unless json.respond_to? :[]
-        _wrap_content(json)
-      end
+    def _prep_root_content(candidate)
+      #TODO invalidate candidate if it cannot be parsed as JSON and it is a String
+      candidate = JSON.parse(candidate) if candidate.is_a? String
+      candidate
     end
 
-    def _wrap_content(json)
-      ContentWrapper.new(json)
+    def _no_errors?
+      validity
     end
   end
 end

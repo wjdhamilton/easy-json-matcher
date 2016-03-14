@@ -1,11 +1,7 @@
 module EasyJSONMatcher
-  class ContentWrapper
+  module ContentWrapper
 
     attr_reader :content
-
-    def initialize(content)
-      @content = content
-    end
 
     def [](key)
       content[key.to_s]

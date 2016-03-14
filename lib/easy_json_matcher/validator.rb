@@ -16,9 +16,12 @@ module EasyJSONMatcher
       end
       _set_content(candidate) #Hook
       if content.nil?
+        # The algorithm has to stop here if content is nil, since subsequent
+        # operations will assume that the content is present.
         return true unless _check_required?
       end
-      _validate
+      _validate #Hook
+      _no_errors?
     end
 
     #Hook
@@ -31,7 +34,7 @@ module EasyJSONMatcher
     # Hook
     # Protected method that Validators use to set their content from the candidate.
     def _set_content(candidate)
-      @content = key ? candidate[key.to_s] : candidate
+      @content = key ? candidate[key] : candidate
     end
 
     # Hook.
@@ -41,19 +44,8 @@ module EasyJSONMatcher
       # Should the method just add errors even if there has been no error? Would
       # avoid undefined method [] for nil:NilClass if you look for a key where
       # there is no error but it would also make the output harder to read...
-      _explain_errors
-      if errors.length > 0
-        error_message[key] = errors
-      end
+      error_message[key.to_sym] = errors
       error_message
-    end
-
-    # Hook.
-    # This method adds error messages to the list of errors when get_errors is called.
-    # Default implementation provides a meaningless error message. Should be overriden
-    # by subclasses.
-    def _explain_errors
-      errors << "#{content} was not valid"
     end
 
     # This method makees sure that the candidate is a json object, and not a
@@ -68,11 +60,20 @@ module EasyJSONMatcher
     end
 
     def _check_required?
-      required
+      if required
+        errors << "Value was not present"
+        return true
+      else
+        return false
+      end
     end
 
     def _create_validator(type:, opts: {})
       ValidatorFactory.get_instance(type: type, opts: opts)
+    end
+
+    def _no_errors?
+      errors.empty?
     end
   end
 end
