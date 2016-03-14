@@ -22,6 +22,17 @@ class EasyJSONMatcherTest < ActiveSupport::TestCase
     assert(test_schema.valid? valid_json)
   end
 
+  # The first thing the gem ought to do is to check that the JSON candidate is actually JSON
+  test "As a user, if the validation candidate cannot be parsed as JSON, the schema should not be valid" do
+    test_schema = EasyJSONMatcher::SchemaGenerator.new {|s|
+      s.has_number(key: :population_of_china_1970)
+    }.generate_schema
+
+    invalid_json = "'population_of_china_1970' 810000000"
+
+    assert_not(test_schema.valid? invalid_json)
+  end
+
 
   test "As a user I want to be able to validate strings" do
     test_schema = EasyJSONMatcher::SchemaGenerator.new {|schema|

@@ -101,4 +101,32 @@ class ErrorMessagesTest < ActiveSupport::TestCase
     assert_not(test_schema.valid? no_number)
     assert_match(/.* is not a Number/, test_schema.get_errors[:number][0])
   end
+
+  test "As a user, given that I have specified that a value should be an object,
+  I want an error message to inform me if a value is not an object" do
+
+    test_schema = EasyJSONMatcher::SchemaGenerator.new {|s|
+      s.has_object(key: :object)
+    }.generate_schema
+
+    no_object = {
+      object: false
+    }.to_json
+
+    assert_not(test_schema.valid? no_object)
+    assert_match(/.* is not an Object/, test_schema.get_errors[:object][0])
+  end
+
+  test "As a user, given that I have supplied an invalid JSON object, I want an
+  error message to inform me that the candidate could not be parsed" do
+
+    test_schema = EasyJSONMatcher::SchemaGenerator.new {|s|
+      s.has_object(key: :object)
+    }.generate_schema
+
+    not_json = 'this is not a JSON String'
+
+    test_schema.valid? not_json
+    assert_match(/.* is not a valid JSON String/, test_schema.get_errors[:root][0])
+  end
 end

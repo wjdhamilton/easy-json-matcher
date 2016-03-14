@@ -2,7 +2,6 @@ require 'easy_json_matcher'
 require 'easy_json_matcher/validator_factory'
 require 'json'
 require 'easy_json_matcher/content_wrapper'
-require 'forwardable'
 module EasyJSONMatcher
   class Node < Validator
     include ContentWrapper
@@ -58,18 +57,33 @@ module EasyJSONMatcher
 
     def _wrap_errors(child_errors)
       unless _is_root?
-        errors_wrapper = {}
-        errors_wrapper[key] = child_errors
-        return errors_wrapper
+        _wrap_child_errors(child_errors)
       else
-        return child_errors
+        _root_errors(child_errors)
       end
+    end
+
+    def _wrap_child_errors(child_errors)
+      errors_wrapper = {}
+      errors_wrapper[key] = child_errors
+      errors_wrapper
+    end
+
+    def _root_errors(child_errors)
+      errors.length > 0 ? {root: errors} : child_errors
     end
 
     def _prep_root_content(candidate)
       #TODO invalidate candidate if it cannot be parsed as JSON and it is a String
-      candidate = JSON.parse(candidate) if candidate.is_a? String
-      candidate
+       candidate.is_a?(String) ? _parse_and_verify_json(candidate) : candidate
+    end
+
+    def _parse_and_verify_json(json)
+      begin
+        JSON.parse(json)
+      rescue JSON::ParserError
+        errors << '#{json} is not a valid JSON String'
+      end
     end
 
     def _no_errors?

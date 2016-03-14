@@ -16,11 +16,10 @@ module EasyJSONMatcher
       end
       _set_content(candidate) #Hook
       if content.nil?
-        # The algorithm has to stop here if content is nil, since subsequent
-        # operations will assume that the content is present.
-        return true unless _check_required?
+         _check_required?
+      else
+        _validate #Hook
       end
-      _validate #Hook
       _no_errors?
     end
 
@@ -48,9 +47,12 @@ module EasyJSONMatcher
       error_message
     end
 
-    # This method makees sure that the candidate is a json object, and not a
+    # This method makees sure that the candidate behaves like a Hash, and not a
     # value or an array.
     def _check_content_type(candidate)
+      # TODO perhaps this should raise an error instead of returning false?
+      # if the value that has arrived at this point doesn't behave like a Hash then it
+      # is in the wrong place.
       begin
         candidate[key]
       rescue TypeError

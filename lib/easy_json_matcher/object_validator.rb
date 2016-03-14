@@ -6,7 +6,7 @@ module EasyJSONMatcher
     end
 
     def _content_is_object?
-      errors << "#{content} is not an object" unless content.is_a? Hash
+      errors << "#{content} is not an Object" unless content.is_a? Hash
     end
   end
 end
