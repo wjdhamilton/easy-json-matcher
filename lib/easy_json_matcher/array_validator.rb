@@ -50,7 +50,7 @@ module EasyJSONMatcher
 
     def _validate_content
       validators.each do |val|
-        _run_validator(val)
+        _accumulate_errors val
       end
     end
 
@@ -66,12 +66,15 @@ module EasyJSONMatcher
       @validators ||= []
     end
 
-    def _run_validator(v)
-      content.each do |value|
-        unless v.valid?(value)
-          errors << v.errors
-        end
+    def _accumulate_errors(validator)
+      content.each do |candidate|
+        _run_validator(validator, candidate)
       end
+      errors << validator.errors unless validator._no_errors?
+    end
+
+    def _run_validator(validator, candidate)
+      validator.valid? candidate
     end
 
     def _validation_result

@@ -13,8 +13,6 @@ class ErrorMessagesTest < ActiveSupport::TestCase
       end
     }.generate_schema
 
-    # This JSON only reflects the structure of the above, it's validity is rendered
-    # irrelevant by the monkey-patch of Validator
     has_errors = {
       oops: 1,
       ok: 'ok',
@@ -50,6 +48,24 @@ class ErrorMessagesTest < ActiveSupport::TestCase
     assert_not(test_schema.valid? wrong_type)
 
     assert_match(/.*is not an Array/, test_schema.get_errors[:arr][0])
+  end
+
+  test "As a user, given that I have specified that an array should contain a specific
+        type of value and the array contains other types of value, I want to know which
+        value was the wrong type and why" do
+
+        test_schema = EasyJSONMatcher::SchemaGenerator.new {|s|
+          s.contains_array key: :array do |a|
+            a.should_only_contain type: :string
+          end
+        }.generate_schema
+
+        episodes_where_sheldon_says_bazinga_in_series_2 = {
+          array: [1,2,3]
+        }.to_json
+
+        assert_not(test_schema.valid? episodes_where_sheldon_says_bazinga_in_series_2)
+        assert_match(/.* is not a String/, test_schema.get_errors[:array][0][0])
   end
 
   test "As a user, given that I have specified that a boolean should map to a given
