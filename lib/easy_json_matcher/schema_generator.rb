@@ -5,11 +5,12 @@ require 'easy_json_matcher/exceptions'
 module EasyJSONMatcher
   class SchemaGenerator
 
-    attr_reader :node, :name, :options
+    attr_reader :node, :name, :options, :glob_opts
 
-    def initialize(opts: {})
+    def initialize(opts: {}, global_opts: {})
       @name = opts.delete(:key)
       @options = opts
+      @glob_opts = global_opts
       yield self if block_given?
     end
 
@@ -85,7 +86,7 @@ module EasyJSONMatcher
 
     def _validator_opts(key, opts)
       opts[:key] = key
-      options.merge(opts)
+      glob_opts.merge(opts)
     end
 
     def _create_validator(key, opts)
@@ -93,7 +94,7 @@ module EasyJSONMatcher
     end
 
     def _node_generator(opts = {})
-     self.class.new opts: opts
+     self.class.new opts: opts, global_opts: glob_opts
     end
 
     def node

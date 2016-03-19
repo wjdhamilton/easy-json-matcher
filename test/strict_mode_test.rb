@@ -6,7 +6,7 @@ class StrictModeTest < ActiveSupport::TestCase
         in the candidate minus the set of keys specified in the schema equals the
         empty set" do
 
-    test_schema = EasyJSONMatcher::SchemaGenerator.new(opts: {strict: true}) {|s|
+    test_schema = EasyJSONMatcher::SchemaGenerator.new(global_opts: {strict: true}) {|s|
       s.has_string key: :first
       s.has_string key: :second
       s.has_string key: :third
@@ -23,7 +23,7 @@ class StrictModeTest < ActiveSupport::TestCase
   end
 
   setup do
-    @test_schema = EasyJSONMatcher::SchemaGenerator.new(opts: {strict: true}) {|s|
+    @test_schema = EasyJSONMatcher::SchemaGenerator.new(global_opts: {strict: true}) {|s|
       s.has_string key: :name
       s.contains_node key: :about do |n|
         n.has_string  key: :religion
@@ -58,7 +58,6 @@ class StrictModeTest < ActiveSupport::TestCase
     }.to_json
 
     assert_not(@test_schema.valid? zeus)
-    byebug
     assert_match(/\[:spouse, :address\] found in addition to expected keys/, @test_schema.get_errors[:about][:node_errors_][0] )
   end
 
