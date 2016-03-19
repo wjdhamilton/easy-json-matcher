@@ -1,4 +1,3 @@
-require 'easy_json_matcher'
 module EasyJSONMatcher
   # Override of Ruby error for namespacing
   class Error < RuntimeError; end

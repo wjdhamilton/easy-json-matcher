@@ -1,4 +1,3 @@
-require 'easy_json_matcher'
 module EasyJSONMatcher
   class SchemaLibrary
 
