@@ -8,7 +8,11 @@ module EasyJSONMatcher
       @key = options[:key]
       @required = options[:required]
       @errors = []
+      _post_initialise(options)
     end
+
+    #Hook. Allows further setup to be carried out by subclasses
+    def _post_initialise(options); end
 
     def valid?(candidate)
       if key

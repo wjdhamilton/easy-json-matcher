@@ -5,18 +5,12 @@ require 'easy_json_matcher/exceptions'
 module EasyJSONMatcher
   class SchemaGenerator
 
-    attr_reader :node
-    attr_reader :name
+    attr_reader :node, :name, :options
 
     def initialize(opts: {})
-      @name = opts[:key]
+      @name = opts.delete(:key)
+      @options = opts
       yield self if block_given?
-    end
-
-    def contains_node(key:, opts: {})
-      generator = _node_generator _validator_opts(key, opts)
-      yield generator if block_given?
-      node.add_validator generator.generate_schema
     end
 
     def has_attribute(key:, opts: {})
@@ -24,6 +18,12 @@ module EasyJSONMatcher
     end
 
     ################ Methods for adding specific attribute types ##############
+
+    def contains_node(key:, opts: {})
+      generator = _node_generator _validator_opts(key, opts)
+      yield generator if block_given?
+      node.add_validator generator.generate_schema
+    end
 
     def has_boolean(key:, opts: {})
       has_attribute(key: key, opts: opts.merge({type: :boolean}))
@@ -50,7 +50,7 @@ module EasyJSONMatcher
     end
 
     def contains_array(key:, opts: {})
-      opts.merge!({type: :array})
+      opts = opts.merge!({type: :array})
       array_validator = _create_validator(key, opts)
       yield array_validator if block_given?
       node.add_validator array_validator
@@ -85,7 +85,7 @@ module EasyJSONMatcher
 
     def _validator_opts(key, opts)
       opts[:key] = key
-      opts
+      options.merge(opts)
     end
 
     def _create_validator(key, opts)
@@ -97,7 +97,7 @@ module EasyJSONMatcher
     end
 
     def node
-      @node ||= Node.new(opts: _validator_opts(name, {}))
+      @node ||= Node.new(opts: _validator_opts(name, options))
     end
   end
 end
