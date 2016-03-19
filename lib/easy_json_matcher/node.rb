@@ -5,7 +5,7 @@ module EasyJSONMatcher
   class Node < Validator
     include ContentWrapper
 
-    attr_reader :validators, :validity
+    attr_reader :validators, :validity, :strict
 
     def initialize(opts: {})
       super(options: opts)
@@ -17,9 +17,29 @@ module EasyJSONMatcher
       validators << validator
     end
 
+    def _post_initialise(options)
+      @strict = options[:strict]
+    end
+
     def _validate
+      _validate_strict_keyset
       validators.each do |val|
         @validity = false unless _use_validator val
+      end
+    end
+
+    def _validate_strict_keyset
+      _validate_keyset if strict
+    end
+
+    def _validate_keyset
+      unexpected_keys = keys - _expected_keys
+      errors << "#{unexpected_keys} found in addition to expected keys" unless unexpected_keys.empty?
+    end
+
+    def _expected_keys
+      validators.each_with_object([]) do |validator, keyset|
+        keyset << validator.key
       end
     end
 
@@ -55,11 +75,16 @@ module EasyJSONMatcher
     end
 
     def _wrap_errors(child_errors)
+      _add_local_errors_to child_errors
       unless _is_root?
         _wrap_child_errors(child_errors)
       else
         _root_errors(child_errors)
       end
+    end
+
+    def _add_local_errors_to(child_errors)
+      child_errors.merge!({node_errors_: errors}) unless errors.empty?
     end
 
     def _wrap_child_errors(child_errors)
@@ -73,7 +98,6 @@ module EasyJSONMatcher
     end
 
     def _prep_root_content(candidate)
-      #TODO invalidate candidate if it cannot be parsed as JSON and it is a String
        candidate.is_a?(String) ? _parse_and_verify_json(candidate) : candidate
     end
 
@@ -86,7 +110,7 @@ module EasyJSONMatcher
     end
 
     def _no_errors?
-      validity
+      validity && errors.empty?
     end
   end
 end
