@@ -11,7 +11,7 @@ module EasyJSONMatcher
       _post_initialise(options)
     end
 
-    #Hook. Allows further setup to be carried out by subclasses
+    # Hook. Allows further setup to be carried out by subclasses
     def _post_initialise(options); end
 
     def valid?(candidate)
@@ -27,7 +27,12 @@ module EasyJSONMatcher
       _no_errors?
     end
 
-    #Hook
+    # Hook. Overriden in Node
+    def reset!
+      errors.clear
+    end
+
+    # Hook
     # Protected method that Validators use to implement their validation logic.
     # Called by #valid?
     def _validate

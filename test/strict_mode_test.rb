@@ -32,7 +32,7 @@ class StrictModeTest < ActiveSupport::TestCase
     }.generate_schema
   end
 
-  test "As a user, if I have specified strict at the top level, I expect it to apply to nodes specified inline" do
+  test "As a user, if I have specified strict at the top level, I expect it to apply to nested nodes" do
 
     poseidon = {
       name: 'Poseidon',
@@ -58,7 +58,6 @@ class StrictModeTest < ActiveSupport::TestCase
     }.to_json
 
     assert_not(@test_schema.valid? zeus)
-    assert_match(/\[:spouse, :address\] found in addition to expected keys/, @test_schema.get_errors[:about][:node_errors_][0] )
+    assert_match(/\[:spouse, :address\] found in addition to expected keys/, @test_schema.get_errors[:about][:node_errors_][0])
   end
-
 end

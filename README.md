@@ -209,6 +209,17 @@ validity = retrieved.valid? json
 
 You can also add a schema directly using `EasyJSONMatcher::SchemaLibrary#add_schema` if you wish.
 
+##Reusing Validator Objects
+Once a validator has run, and has found issues, then those issues will be recorded in the object return by `#errors`. However, if the `#valid?` is called again, then any errors found during that validation will be added to those found during the first validation. To avoid this, and reuse the validator, you can reset it as follows:
+
+```ruby
+schema.valid? json
+errors = schema.get_errors
+schema.reset!
+schema.valid? other_json
+new_errors = schema.get_errors
+```
+
 ##Issues
 If you find any aspect of the gem which does not behave as expected, please raise an issue. If the issue relates specifically to a JSON payload validating incorrectly for a given schema, please supply both the code you used to create the schema and the object that did not validate in your bug report. That will make it much easier to track down the issue!
 
