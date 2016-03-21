@@ -28,6 +28,11 @@ module EasyJSONMatcher
       end
     end
 
+    def reset!
+      errors.clear
+      validators.each(&:reset!)
+    end
+
     def _validate_strict_keyset
       _validate_keyset if strict
     end

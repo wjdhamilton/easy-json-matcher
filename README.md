@@ -169,6 +169,16 @@ This applies to methods prefixed with both `has_` and `contains_`.
 The options accepted by all validators are as follows:
 
 *`required:` indicates that the value must be present. Note that has_value will accept `null` as a value in this case, but the key must be present in the JSON object.*
+*`strict:` only applies to nodes. If this is set to `true` then the schema will only validate a nodes where its keyset is equal to or a subset of the expected keyset. If it has any keys in addition to the expected set then the schema will be invalid.*
+
+####Global Options
+Options can also be added as defaults for the entire schema by passing a `Hash` to the `global_defaults:` argument for `EasyJSONMatcher::SchemaGenerator.new`, so for instance:
+
+```ruby
+EasyJSONMatcher::SchemaGenerator.new(global_opts: {required: true})
+```
+
+would generate a validator that required all its keys to be present. Global settings can be overriden for a specific attribute by setting their values in the usual way. Note that these settings will not apply to schemas that have been recovered from `SchemaLibrary`.
 
 ##Validation
 Once you have defined your schema, you can retrieve the generated validator using `#generate_schema`. The object that is returned responds to the `#valid?` method to which you pass your JSON object. It will return `true` iff the object complies with the schema:
@@ -180,6 +190,9 @@ schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
 
 schema.valid? json
 ```
+
+##Error Messages
+In order to assist you to understand _why_ the candidate was considered invalid, a `Hash` detailing the reasons why any elements were invalid can be retrieved after `valid?` has been called by calling `get_errors`. Note that there is an attribute called `errors`. It is not intended to be used to retrieve the list of errors, all you'll get is the error list for the top level of the schema you sent the message to.
 
 ##Reusing Schemas
 Any schema can be registered with the `SchemaLibrary` object, by sending the `#register` message to an instance of `SchemaGenerator`. Doing so explicitly registers the schema's `Validator` with `SchemaLibrary` and also returns the generated `Validator`. So you can do the following:
@@ -195,6 +208,17 @@ validity = retrieved.valid? json
 ```
 
 You can also add a schema directly using `EasyJSONMatcher::SchemaLibrary#add_schema` if you wish.
+
+##Reusing Validator Objects
+Once a validator has run, and has found issues, then those issues will be recorded in the object return by `#errors`. However, if the `#valid?` is called again, then any errors found during that validation will be added to those found during the first validation. To avoid this, and reuse the validator, you can reset it as follows:
+
+```ruby
+schema.valid? json
+errors = schema.get_errors
+schema.reset!
+schema.valid? other_json
+new_errors = schema.get_errors
+```
 
 ##Issues
 If you find any aspect of the gem which does not behave as expected, please raise an issue. If the issue relates specifically to a JSON payload validating incorrectly for a given schema, please supply both the code you used to create the schema and the object that did not validate in your bug report. That will make it much easier to track down the issue!
