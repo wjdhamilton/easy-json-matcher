@@ -1,11 +1,10 @@
 require 'test_helper'
-
 class ResetTest < ActiveSupport::TestCase
 
   test 'As a user, I want to be able to reuse a validator' do
     # In other words, after a valid? has been called, the error messages need to be cleared
-    test_schema = EasyJSONMatcher::SchemaGenerator.new(global_opts: {strict: true}) {|sc|
-      sc.has_boolean key: :bool, opts: {required: true}
+    test_schema = EasyJSONMatcher::SchemaGenerator.new(global_opts: { strict: true }) { |sc|
+      sc.has_boolean key: :bool, opts: { required: true }
       sc.contains_node key: :node do |n|
         n.has_value key: :val
       end
@@ -15,7 +14,7 @@ class ResetTest < ActiveSupport::TestCase
 
     }.to_json
 
-    assert_not(test_schema.valid? invalid_json)
+    assert_not(test_schema.valid?(invalid_json))
     assert_not(test_schema.get_errors[:bool][0].nil?)
 
     test_schema.reset!
