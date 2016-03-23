@@ -12,7 +12,10 @@ gemspec
 
 # To use a debugger
 group :development, :test do
+  gem 'activesupport'
   gem 'pretty_backtrace'
   gem 'byebug'
   gem 'mocha'
+  gem 'rdoc'
+  gem 'rake'
 end

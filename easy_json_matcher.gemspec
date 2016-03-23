@@ -11,13 +11,9 @@ Gem::Specification.new do |s|
   s.email       = ["wjdhamilton@hotmail.co.uk"]
   s.homepage    = "https://github.com/wjdhamilton/easy-json-matcher"
   s.summary     = "Easily test your JSON output with templates and Schemas"
-  s.description = "TBC: Description of JsonapiMatcher."
+  s.description = "Test your JSON output in Ruby, with a DSL that makes reasoning about your JSON very straightforward. See the Homepage for docs."
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
-
-  s.add_dependency "rails", "~> 4.2.5.1"
-
-  s.add_development_dependency "sqlite3"
 end
