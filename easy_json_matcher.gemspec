@@ -6,7 +6,7 @@ require "easy_json_matcher/version"
 # Describe your gem and declare its dependencies:
 Gem::Specification.new do |s|
   s.name        = "easy_json_matcher"
-  s.version     = JsonapiMatcher::VERSION
+  s.version     = EasyJSONMatcher::VERSION
   s.authors     = ["WJD Hamilton"]
   s.email       = ["wjdhamilton@hotmail.co.uk"]
   s.homepage    = "https://github.com/wjdhamilton/easy-json-matcher"
