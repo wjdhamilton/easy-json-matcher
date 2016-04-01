@@ -157,6 +157,18 @@ will validate the following json object:
 }"
 ```
 
+###Custom Validations
+
+Sometimes simply knowing that a value is the correct type and is present isn't enough. Sometimes you need more detail. To facilitate this, the `options` hash can accept a `custom_validator:` option which must refer to a lambda like so: 
+
+```ruby
+  EasyJSONMatcher::SchemaGenerator.new {|schema|
+    schema.has_value key: val, opts: { custom_validator: ->(candidate){ "value should say hello world" unless value == "hello world" } }
+  }
+```
+
+Obviously you can reuse the same lamda in different places. The lambda object must return an object which is the error message that is to be used if the value is not valid. 
+
 ###Options
 All the messages that define the content of a schema can accept an options hash with the keyword `:opts`, for instance:
 
@@ -169,7 +181,7 @@ This applies to methods prefixed with both `has_` and `contains_`.
 The options accepted by all validators are as follows:
 
 *`required:` indicates that the value must be present. Note that has_value will accept `null` as a value in this case, but the key must be present in the JSON object.*
-*`strict:` only applies to nodes. If this is set to `true` then the schema will only validate a nodes where its keyset is equal to or a subset of the expected keyset. If it has any keys in addition to the expected set then the schema will be invalid.*
+*`strict:` only applies to nodes. If this is set to `true` then the schema will only validate a node where its keyset is equal to or a subset of the expected keyset. If it has any keys in addition to the expected set then the schema will be invalid.*
 
 ####Global Options
 Options can also be added as defaults for the entire schema by passing a `Hash` to the `global_defaults:` argument for `EasyJSONMatcher::SchemaGenerator.new`, so for instance:
