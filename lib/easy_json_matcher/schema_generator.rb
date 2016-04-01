@@ -14,7 +14,7 @@ module EasyJSONMatcher
       yield self if block_given?
     end
 
-    def has_attribute(key:, opts: {}, custom_validator: nil)
+    def has_attribute(key:, opts: {})
       node.add_validator(_create_validator(key, opts))
     end
 
