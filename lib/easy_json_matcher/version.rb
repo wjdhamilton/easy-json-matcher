@@ -1,3 +1,3 @@
-module JsonapiMatcher
-  VERSION = "0.1.1".freeze
+module EasyJSONMatcher
+  VERSION = "0.2.1".freeze
 end

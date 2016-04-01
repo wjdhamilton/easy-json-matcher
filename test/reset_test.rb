@@ -19,6 +19,12 @@ class ResetTest < ActiveSupport::TestCase
 
     test_schema.reset!
 
+    valid_json = {
+      bool: true
+    }.to_json
+    
+    assert(test_schema.valid?(valid_json), test_schema.get_errors)
+
     errors = test_schema.get_errors
     assert errors[:node][:val].empty?
     assert errors[:bool].empty?
