@@ -1,12 +1,13 @@
 module EasyJSONMatcher
   class Validator
 
-    attr_reader :content, :required, :errors
+    attr_reader :content, :required, :errors, :custom_validator
     attr_accessor :key
 
     def initialize(options: {})
       @key = options[:key]
       @required = options[:required]
+      @custom_validator = options[:custom_validator]
       @errors = []
       _post_initialise(options)
     end
@@ -24,6 +25,7 @@ module EasyJSONMatcher
       else
         _validate #Hook
       end
+      _run_custom_validator if custom_validator
       _no_errors?
     end
 
@@ -81,6 +83,16 @@ module EasyJSONMatcher
 
     def _create_validator(type:, opts: {})
       ValidatorFactory.get_instance(type: type, opts: opts)
+    end
+
+    def _custom_validator?
+      custom_validator
+    end
+
+    def _run_custom_validator
+      if error_message = custom_validator.call(content)
+        errors << error_message
+      end
     end
 
     def _no_errors?
