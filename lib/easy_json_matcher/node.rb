@@ -29,6 +29,7 @@ module EasyJSONMatcher
     end
 
     def reset!
+      @validity = true
       errors.clear
       validators.each(&:reset!)
     end
