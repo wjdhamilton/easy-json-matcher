@@ -4,7 +4,7 @@ This gem is designed to make it easy for you to validate JSON objects in Ruby.
 
 The interface uses a plain Ruby DSL to make representing expected JSON output in your test suites very straightforward. No need to work in any other language or even create additional files to store your schemas if you don't want to.  
 
-version 0.2.1
+version 0.2.2
 
 ##Installation
 
