@@ -21,7 +21,7 @@ module EasyJSONMatcher
     ################ Methods for adding specific attribute types ##############
 
     def contains_node(key:, opts: {})
-      generator = _node_generator _validator_opts(key, opts)
+      generator = _node_generator(_validator_opts(key, opts))
       yield generator if block_given?
       node.add_validator generator.generate_schema
     end

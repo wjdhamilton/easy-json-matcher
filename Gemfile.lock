@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    easy_json_matcher (0.2.1)
+    easy_json_matcher (0.2.2)
 
 GEM
   remote: https://rubygems.org/

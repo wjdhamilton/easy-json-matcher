@@ -1,5 +1,6 @@
 require 'test_helper'
 require_relative '../lib/easy_json_matcher/validator_set.rb'
+require "validator_interface_test"
 
 class ValidatorSetTest < ActiveSupport::TestCase
   include ValidatorInterfaceTest
@@ -86,6 +87,16 @@ class ValidatorSetTest < ActiveSupport::TestCase
     validators = [ValidatorDouble.new, ValidatorDouble.new]
     @subject = subject << validators
     assert(subject.validators == (validators.unshift(test_validator)))
+  end
+
+  test "Validator should handle the unwrapping of values" do
+    value = "a string"
+    test_candidate = { candidate: value}
+    test_validator = MiniTest::Mock.new
+    test_validator.expect(:valid?, true, [value])
+    @subject = subject.add_validator(validator: test_validator)
+    call_validate(test_candidate)
+    test_validator.verify
   end
   
   def mock_with_errors(error_message: { mock: "error message" })

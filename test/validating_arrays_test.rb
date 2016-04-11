@@ -1,10 +1,10 @@
 require 'test_helper'
 
 class ValidatingArraysTest < ActiveSupport::TestCase
+  
 
   test "As a user I want to validate that my arrays can contain objects of a specific schema" do
     EasyJSONMatcher::SchemaGenerator.new {|s|
-
       s.has_attribute key: :name, opts: {type: :string, required: true}
       s.has_attribute key: :spouse, opts: {type: :string}
     }.register as: :greek_hero
@@ -32,6 +32,7 @@ class ValidatingArraysTest < ActiveSupport::TestCase
       data: [1,2,3,4,5]
     }.to_json
 
+    test_schema.reset!
     assert_not(test_schema.valid?(invalid_json), "#{invalid_json} should not have validated as it does not contain a :heroes schema")
   end
 
@@ -134,6 +135,6 @@ class ValidatingArraysTest < ActiveSupport::TestCase
   end
 
   test 'as a user I want to validate that my arrays contain only dates' do
-
+    flunk
   end
 end

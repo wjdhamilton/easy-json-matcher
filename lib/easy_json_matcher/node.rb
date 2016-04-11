@@ -6,14 +6,19 @@ module EasyJSONMatcher
   class Node 
     include ContentWrapper
 
-    attr_reader :validators, :strict, :errors
+    attr_reader :validators, :strict, :errors, :node_validator
     attr_accessor :key
 
     def initialize(opts: {})
       @key = opts[:key]
       @validators = ValidatorSet.new
+      @node_validator = opts[:validate_with] || _default_validator
       @options = opts
       @errors = []
+    end
+
+    def _default_validator
+      ObjectValidator.new(options: { key: key })
     end
 
     def add_validator(validator)
@@ -22,7 +27,8 @@ module EasyJSONMatcher
 
     def valid?(candidate)
       _set_content(candidate)
-  #   _validate_strict_keyset
+      _validate_strict_keyset(candidate)
+      _find_errors
       _no_errors?
     end
 
@@ -39,8 +45,8 @@ module EasyJSONMatcher
       validators.reset!
     end
 
-    def _validate_strict_keyset
-      _validate_keyset if strict
+    def _validate_strict_keyset(candidate)
+      errors << node_validator.get_errors unless node_validator.valid?(candidate)
     end
 
     def _validate_keyset
@@ -53,14 +59,6 @@ module EasyJSONMatcher
       validators.validators.each_with_object([]) do |validator, keyset|
         keyset << validator.key
       end
-    end
-
-    def _get_content_for(key)
-      content[key]
-    end
-
-    def _get_validator_for(key)
-      validators[key]
     end
 
     def _set_content(candidate)
@@ -113,10 +111,6 @@ module EasyJSONMatcher
       rescue JSON::ParserError
         errors << '#{json} is not a valid JSON String'
       end
-    end
-
-    def _no_errors?
-      validity && errors.empty?
     end
   end
 end

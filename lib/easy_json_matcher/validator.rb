@@ -1,13 +1,14 @@
 module EasyJSONMatcher
   class Validator
 
-    attr_reader :content, :required, :errors, :custom_validator
+    attr_reader :content, :required, :errors, :custom_validator, :opts
     attr_accessor :key
 
     def initialize(options: {})
       @key = options[:key]
       @required = options[:required]
       @custom_validator = options[:custom_validator]
+      @opts = options
       @errors = []
       _post_initialise(options)
     end
@@ -93,6 +94,11 @@ module EasyJSONMatcher
       if error_message = custom_validator.call(content)
         errors << error_message
       end
+    end
+
+    # Add an error to the list of errors to be returned
+    def _add_error(error)
+      errors << error
     end
 
     def _no_errors?
