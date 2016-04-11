@@ -1,37 +1,42 @@
 require 'easy_json_matcher/validator_factory'
 require 'json'
 require 'easy_json_matcher/content_wrapper'
+
 module EasyJSONMatcher
-  class Node < Validator
+  class Node 
     include ContentWrapper
 
-    attr_reader :validators, :validity, :strict
+    attr_reader :validators, :strict, :errors
+    attr_accessor :key
 
     def initialize(opts: {})
-      super(options: opts)
-      @validators = []
-      @validity = true
+      @key = opts[:key]
+      @validators = ValidatorSet.new
+      @options = opts
+      @errors = []
     end
 
     def add_validator(validator)
-      validators << validator
+      @validators = validators.add_validator(validator: validator)
     end
 
-    def _post_initialise(options)
-      @strict = options[:strict]
+    def valid?(candidate)
+      _set_content(candidate)
+  #   _validate_strict_keyset
+      _no_errors?
     end
 
-    def _validate
-      _validate_strict_keyset
-      validators.each do |val|
-        @validity = false unless _use_validator val
-      end
+    def _find_errors
+      errors << validators.get_errors unless validators.valid? self
+    end
+
+    def _no_errors?
+      errors.empty?
     end
 
     def reset!
-      @validity = true
       errors.clear
-      validators.each(&:reset!)
+      validators.reset!
     end
 
     def _validate_strict_keyset
@@ -44,13 +49,10 @@ module EasyJSONMatcher
     end
 
     def _expected_keys
-      validators.each_with_object([]) do |validator, keyset|
+      # Horrible hacky thing to be sorted soon
+      validators.validators.each_with_object([]) do |validator, keyset|
         keyset << validator.key
       end
-    end
-
-    def _use_validator(validator)
-      validator.valid? self
     end
 
     def _get_content_for(key)
@@ -75,9 +77,7 @@ module EasyJSONMatcher
     end
 
     def _collect_child_errors
-      validators.each_with_object({}) do |val, container|
-        container.merge!(val.get_errors)
-      end
+      validators.get_errors
     end
 
     def _wrap_errors(child_errors)
@@ -100,7 +100,7 @@ module EasyJSONMatcher
     end
 
     def _root_errors(child_errors)
-      errors.length > 0 ? {root: errors} : child_errors
+      errors.length > 0 ? {root: errors}.merge(child_errors) : child_errors
     end
 
     def _prep_root_content(candidate)

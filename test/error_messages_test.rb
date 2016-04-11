@@ -28,7 +28,6 @@ class ErrorMessagesTest < ActiveSupport::TestCase
 
     # Generate error messages. Better test that the thing is definitely invalid too...
     assert_not(test_schema.valid? has_errors)
-
     assert_match(/.*is not a String/, test_schema.get_errors[:oops][0])
     assert_match( /.*is not a String/, test_schema.get_errors[:nested_oops][:bigger_oops][0])
   end
