@@ -1,30 +1,39 @@
 module CheckTypeValidations
 
   KEY = :candidate
-  
+
   TYPES = {
-    number:   { KEY => 1 },
-    string:   { KEY => "string" },
-    boolean:  { KEY => true },
-    object:   { KEY => {} },
-    array:    { KEY => [] }
+    number:    1 ,
+    string:    "string" ,
+    boolean:   true ,
+    object:    {} ,
+    array:     [] 
   }
 
   def assert_validates_json_type(name, validator)
-    define_validates(name, validator)
-    define_shouldnt_validate(name, validator)
+    if name == :value
+      handle_value_edge_case 
+    else
+      assert_validates(name, validator)
+      assert_shouldnt_validate(name, validator)
+    end
+  end
+
+  def handle_value_edge_case
+    # The thing is, that value can be anything, including nil so all the above 
+    # values should return true since they are all values. 
   end
 
   def get_names
     TYPES.keys
   end
 
-  def define_validates(name, validator)
-    define_should_validate(name, validator)
+  def assert_validates(name, validator)
+    assert_should_validate(name, validator)
   end
 
-  def define_shouldnt_validate(name, validator)
-    get_invalid_types(name).each {|type| define_should_not_validate(type, validator) }
+  def assert_shouldnt_validate(name, validator)
+    get_invalid_types(name).each {|type| assert_should_not_validate(type, validator) }
   end
 
   def get_invalid_types(name)
@@ -35,14 +44,14 @@ module CheckTypeValidations
     raise "#{name} not a valid JSON type" unless names.include? name
   end
 
-  def define_should_validate(type, validator)
+  def assert_should_validate(type, validator)
     method_name = "test_#{validator}_should_validate_#{type}"
     define_method(method_name) do
       assert(@subject.valid?(TYPES[type]), "#{validator} did not validate #{type}")
     end
   end
 
-  def define_should_not_validate(type, validator)
+  def assert_should_not_validate(type, validator)
     method_name = "test_#{validator}_should_not_validate_#{type}"
     define_method(method_name) do
       assert_not(@subject.valid?(TYPES[type]), "#{validator} should not have validated #{type}")

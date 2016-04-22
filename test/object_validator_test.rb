@@ -10,7 +10,7 @@ class ObjectValidatorTest < ActiveSupport::TestCase
   assert_validates_json_type(:object, EasyJSONMatcher::ObjectValidator)
 
   setup do
-    @subject = EasyJSONMatcher::ObjectValidator.new(options: {key: :candidate})
+    @subject = EasyJSONMatcher::ObjectValidator.new
   end
 
 end

@@ -16,18 +16,14 @@ module EasyJSONMatcher
       ObjectValidator.new(opts)
     end
 
-    def _validate
-      _validate_content_type
-      _validate_keyset if strict
+    def _validate(candidate)
+      _validate_content_type candidate
+      _validate_keyset(candidate) if strict
     end
 
-    def _validate_content_type
-      _add_error("#{content} is not an Object") unless _content_is_object?
-    end
-
-    def _content_is_object?
-      content.is_a? Hash
-    end
+    def _validate_content_type(candidate)
+      _add_error("#{content} is not an Object") unless candidate.is_a? Hash
+   end
 
     def _validate_keyset
     end

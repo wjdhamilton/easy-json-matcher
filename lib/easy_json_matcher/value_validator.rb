@@ -3,7 +3,7 @@ module EasyJSONMatcher
   
   class ValueValidator < Validator
 
-    def _validate
+    def _validate(candidate)
       true
     end
   end

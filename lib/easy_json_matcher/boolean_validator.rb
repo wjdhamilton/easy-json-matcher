@@ -2,12 +2,12 @@ require 'easy_json_matcher/validator'
 module EasyJSONMatcher
   class BooleanValidator < Validator
 
-    def _validate
-      errors << "#{content} is not a Boolean" unless _content_is_boolean?
+    def _validate(candidate)
+      errors << "#{candidate} is not a Boolean" unless _candidate_is_boolean?(candidate)
     end
 
-    def _content_is_boolean?
-      clazz = content.class
+    def _candidate_is_boolean?(candidate)
+      clazz = candidate.class
       (clazz == TrueClass) || (clazz == FalseClass)
     end
   end

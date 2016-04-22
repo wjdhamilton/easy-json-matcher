@@ -5,7 +5,6 @@ module EasyJSONMatcher
     attr_accessor :key
 
     def initialize(options: {})
-      @key = options[:key]
       @required = options[:required]
       @custom_validator = options[:custom_validator]
       @opts = options
@@ -17,35 +16,20 @@ module EasyJSONMatcher
     def _post_initialise(options); end
 
     def valid?(candidate)
-      if key
-        return false unless _check_content_type(candidate)
-      end
-      _set_content(candidate) #Hook
-      if content.nil?
+      if candidate.nil?
          _check_required?
       else
-        _validate #Hook
+        _validate candidate #Hook
       end
-      _run_custom_validator if custom_validator
+      _run_custom_validator(candidate) if custom_validator
       _no_errors?
-    end
-
-    # Hook. Overriden in Node
-    def reset!
-      errors.clear
     end
 
     # Hook
     # Protected method that Validators use to implement their validation logic.
     # Called by #valid?
-    def _validate
+    def _validate(candidate)
       raise NotImplementedError.new "Validators must override _validate"
-    end
-
-    # Hook
-    # Protected method that Validators use to set their content from the candidate.
-    def _set_content(candidate)
-      @content = key ? candidate[key] : candidate
     end
 
     # Hook.
@@ -59,26 +43,12 @@ module EasyJSONMatcher
       error_message
     end
 
-    # This method makees sure that the candidate behaves like a Hash, and not a
-    # value or an array.
-    def _check_content_type(candidate)
-      # TODO perhaps this should raise an error instead of returning false?
-      # if the value that has arrived at this point doesn't behave like a Hash then it
-      # is in the wrong place.
-      begin
-        candidate[key]
-      rescue TypeError
-        return false
-      end
-      true
-    end
-
     def _check_required?
       if required
         errors << "Value was not present"
-        return true
-      else
         return false
+      else
+        return true
       end
     end
 
@@ -90,8 +60,8 @@ module EasyJSONMatcher
       custom_validator
     end
 
-    def _run_custom_validator
-      if error_message = custom_validator.call(content)
+    def _run_custom_validator(candidate)
+      if error_message = custom_validator.call(candidate)
         errors << error_message
       end
     end

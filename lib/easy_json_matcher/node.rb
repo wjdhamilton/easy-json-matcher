@@ -21,8 +21,8 @@ module EasyJSONMatcher
       ObjectValidator.new(options: { key: key })
     end
 
-    def add_validator(validator)
-      @validators = validators.add_validator(validator: validator)
+   def add_validator(key:, validator:)
+      validators.add_validator(key: key, validator: validator)
     end
 
     def valid?(candidate)

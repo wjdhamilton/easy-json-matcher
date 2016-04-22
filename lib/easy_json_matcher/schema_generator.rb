@@ -15,7 +15,7 @@ module EasyJSONMatcher
     end
 
     def has_attribute(key:, opts: {})
-      node.add_validator(_create_validator(key, opts))
+      node.add_validator(key: key, validator: _create_validator(opts))
     end
 
     ################ Methods for adding specific attribute types ##############
@@ -90,7 +90,7 @@ module EasyJSONMatcher
     end
 
     def _create_validator(key, opts)
-      ValidatorFactory.get_instance type: opts[:type], opts: _validator_opts(key, opts)
+      ValidatorFactory.get_instance type: opts[:type], opts: _validator_opts( opts)
     end
 
     def _node_generator(opts = {})
