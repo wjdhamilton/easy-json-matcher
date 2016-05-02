@@ -2,7 +2,7 @@ require "test_helper"
 require "validator_interface_test"
 require "check_type_validations"
 
-class BooleanValidatorTest < ActiveSupport::TestCase
+class ArrayValidatorTest < ActiveSupport::TestCase
   include ValidatorInterfaceTest
   extend CheckTypeValidations
 

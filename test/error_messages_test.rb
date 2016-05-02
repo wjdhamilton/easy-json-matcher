@@ -84,9 +84,7 @@ class ErrorMessagesTest < ActiveSupport::TestCase
     assert_match(/.* is not a Boolean/, test_schema.get_errors[:bool][0])
   end
 
-  test "As a user, given that I have specified that a date should map to a given key
-        and that the actual value is not a date, I want to be informed that the value
-        is not a date" do
+  test "I want to be informed if an expected date is not a date" do
 
     test_schema = EasyJSONMatcher::SchemaGenerator.new {|s|
       s.has_date(key: :date)
@@ -97,7 +95,6 @@ class ErrorMessagesTest < ActiveSupport::TestCase
      }.to_json
 
      assert_not(test_schema.valid? no_date)
-
      assert_match(/.* is not a Date/, test_schema.get_errors[:date][0])
   end
 

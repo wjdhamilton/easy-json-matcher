@@ -21,6 +21,7 @@ module EasyJSONMatcher
     ################ Methods for adding specific attribute types ##############
 
     def contains_node(key:, opts: {})
+      opts = opts.merge({ nested: true })
       generator = _node_generator(_validator_opts(opts))
       yield generator if block_given?
       node.add_validator key: key, validator: generator.generate_schema
@@ -64,11 +65,15 @@ module EasyJSONMatcher
     ################ Methods for generating the schema #########################
 
     def generate_schema
-      node
+      if options[:nested]
+        node
+      else
+        RootAdapter.new(node: node)
+      end
     end
 
     def register(as:)
-      SchemaLibrary.add_schema(name: as, schema: generate_schema)
+      SchemaLibrary.add_schema(name: as, schema: node)
       generate_schema
     end
 

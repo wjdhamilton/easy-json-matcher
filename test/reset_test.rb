@@ -15,9 +15,7 @@ class ResetTest < ActiveSupport::TestCase
       string: "not valid for this schema"
     }.to_json
 
-    require 'byebug'; byebug
     assert_not(test_schema.valid?(invalid_json))
-    assert_not(test_schema.get_errors[:bool][0].nil?)
 
     test_schema.reset!
 
