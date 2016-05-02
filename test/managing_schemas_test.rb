@@ -18,7 +18,7 @@ class ManagingSchemasTest < ActiveSupport::TestCase
       name: 'Green Mandarin'
     }.to_json
 
-    schema = EasyJSONMatcher::SchemaLibrary.get_schema(name: @name)
+    schema = EasyJSONMatcher::RootAdapter.new(node: EasyJSONMatcher::SchemaLibrary.get_schema(name: @name))
     assert(schema.valid?(test_schema), "test_schema did not validate correctly")
   end
 
@@ -56,13 +56,12 @@ class ManagingSchemasTest < ActiveSupport::TestCase
       end
     }.register(as: :country)
 
-    EasyJSONMatcher::SchemaGenerator.new {|country_payload|
+    country_payload = EasyJSONMatcher::SchemaGenerator.new {|country_payload|
       country_payload.has_attribute(key: :data, opts: {name: :country, type: :schema})
     }.register(as: :country_payload)
 
     valid_json = "{\"data\":{\"id\":\"4376\",\"type\":\"countries\",\"attributes\":{\"alpha_2\":\"GB\",\"alpha_3\":\"GBR\",\"name\":\"United Kingdom of Great Britain and Northern Ireland\"}}}"
 
-    validator = EasyJSONMatcher::SchemaLibrary.get_schema(name: :country_payload)
-    assert(validator.valid? valid_json)
+    assert(country_payload.valid? valid_json)
   end
 end

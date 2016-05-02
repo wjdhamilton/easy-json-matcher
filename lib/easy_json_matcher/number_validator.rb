@@ -4,13 +4,13 @@ module EasyJSONMatcher
 
   class NumberValidator < Validator
 
-    def _validate
-      errors << "#{content} is not a Number" unless _content_is_a_number?
+    def _validate(candidate)
+      errors << "#{candidate} is not a Number" unless _candidate_is_a_number?(candidate)
     end
 
-    def _content_is_a_number?
+    def _candidate_is_a_number?(candidate)
       begin
-        Kernel::Float(content)
+        Kernel::Float(candidate)
         true
       rescue ArgumentError
         false

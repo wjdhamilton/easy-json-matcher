@@ -8,18 +8,16 @@ class CustomValidationsTest < ActiveSupport::TestCase
       s.has_string key: :a_string, opts: { custom_validator: string_validator }
     end.generate_schema
 
+    should_validate = {
+      a_string: 'hi'
+    }.to_json
+
+    assert(test_schema.valid?(should_validate), test_schema.get_errors)
+
     should_not_validate = {
       a_string: 'go away'
     }.to_json
 
     assert_not(test_schema.valid?(should_not_validate))
-
-    should_validate = {
-      a_string: 'hi'
-    }.to_json
-
-    test_schema.reset!
-
-    assert(test_schema.valid?(should_validate), test_schema.get_errors)
   end
 end

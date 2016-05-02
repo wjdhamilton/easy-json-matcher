@@ -140,10 +140,6 @@ class EasyJSONMatcherTest < ActiveSupport::TestCase
     assert_not(test_schema.valid?(invalid_json), "\"#{not_a_date}\" should not have been validated as a date")
   end
 
-  test "As a user I want to be able to use different types of date format" do
-    flunk "Implement me"
-  end
-
   test "As a user I want to validate object values" do
     test_schema = EasyJSONMatcher::SchemaGenerator.new { |schema|
       schema.has_object(key: :object)

@@ -1,4 +1,5 @@
 require 'test_helper'
+
 class ResetTest < ActiveSupport::TestCase
 
   test 'As a user, I want to be able to reuse a validator' do
@@ -11,17 +12,17 @@ class ResetTest < ActiveSupport::TestCase
     }.generate_schema
 
     invalid_json = {
-
+      string: "not valid for this schema"
     }.to_json
 
     assert_not(test_schema.valid?(invalid_json))
-    assert_not(test_schema.get_errors[:bool][0].nil?)
 
     test_schema.reset!
 
     valid_json = {
       bool: true
     }.to_json
+
     
     assert(test_schema.valid?(valid_json), test_schema.get_errors)
 

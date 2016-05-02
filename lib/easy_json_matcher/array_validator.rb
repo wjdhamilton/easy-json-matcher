@@ -39,18 +39,18 @@ module EasyJSONMatcher
 
 ######################## Private methods #######################################
 
-    def _validate
-      errors << "#{content} is not an Array" unless _content_is_array?
-      _validate_content
+    def _validate(candidate_array)
+      errors << "#{candidate_array} is not an Array" unless candidate_is_array? candidate_array
+      _validate_array(candidate_array)
     end
 
-    def _content_is_array?
-      content.is_a? Array
+    def candidate_is_array?(candidate)
+      candidate.is_a? Array
     end
 
-    def _validate_content
+    def _validate_array(array)
       validators.each do |val|
-        _accumulate_errors val
+        _accumulate_errors val, array
       end
     end
 
@@ -66,8 +66,8 @@ module EasyJSONMatcher
       @validators ||= []
     end
 
-    def _accumulate_errors(validator)
-      content.each do |candidate|
+    def _accumulate_errors(validator, array)
+      array.each do |candidate|
         _run_validator(validator, candidate)
       end
       errors << validator.errors unless validator._no_errors?

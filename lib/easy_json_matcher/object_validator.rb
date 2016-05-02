@@ -1,12 +1,32 @@
 require 'easy_json_matcher/validator'
+
 module EasyJSONMatcher
+
   class ObjectValidator < Validator
-    def _validate
-      _content_is_object?
+
+    attr_reader :keyset, :strict
+
+    def _post_initialise(options)
+      @keyset = options[:keyset]
     end
 
-    def _content_is_object?
-      errors << "#{content} is not an Object" unless content.is_a? Hash
+    def add_key(key)
+      @keyset ||= []
+      keyset << key
+    end
+
+    def _validate(candidate)
+      _validate_content_type candidate
+      _validate_keyset(candidate) if keyset
+    end
+
+    def _validate_content_type(candidate)
+      _add_error("#{content} is not an Object") unless candidate.is_a? Hash
+   end
+
+    def _validate_keyset(candidate)
+      _add_error("#{candidate.keys} does not match #{keyset}") unless candidate.keys.sort == keyset.sort
     end
   end
 end
+

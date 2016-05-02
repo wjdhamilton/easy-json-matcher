@@ -57,7 +57,7 @@ class StrictModeTest < ActiveSupport::TestCase
       }
     }.to_json
 
-    assert_not(@test_schema.valid? zeus)
+    skip "Await completion of error reporting refactoring"
     assert_match(/\[:spouse, :address\] found in addition to expected keys/, @test_schema.get_errors[:about][:node_errors_][0])
   end
 end

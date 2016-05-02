@@ -15,15 +15,16 @@ module EasyJSONMatcher
     end
 
     def has_attribute(key:, opts: {})
-      node.add_validator(_create_validator(key, opts))
+      node.add_validator(key: key, validator: _create_validator(opts))
     end
 
     ################ Methods for adding specific attribute types ##############
 
     def contains_node(key:, opts: {})
-      generator = _node_generator _validator_opts(key, opts)
+      opts = opts.merge({ nested: true })
+      generator = _node_generator(_validator_opts(opts))
       yield generator if block_given?
-      node.add_validator generator.generate_schema
+      node.add_validator key: key, validator: generator.generate_schema
     end
 
     def has_boolean(key:, opts: {})
@@ -52,9 +53,9 @@ module EasyJSONMatcher
 
     def contains_array(key:, opts: {})
       opts = opts.merge!({type: :array})
-      array_validator = _create_validator(key, opts)
+      array_validator = _create_validator(opts)
       yield array_validator if block_given?
-      node.add_validator array_validator
+      node.add_validator key: key, validator: array_validator
     end
 
     def has_schema(key:, opts: {})
@@ -64,11 +65,15 @@ module EasyJSONMatcher
     ################ Methods for generating the schema #########################
 
     def generate_schema
-      node
+      if options[:nested]
+        node
+      else
+        RootAdapter.new(node: node)
+      end
     end
 
     def register(as:)
-      SchemaLibrary.add_schema(name: as, schema: generate_schema)
+      SchemaLibrary.add_schema(name: as, schema: node)
       generate_schema
     end
 
@@ -84,13 +89,12 @@ module EasyJSONMatcher
       validator.key = key
     end
 
-    def _validator_opts(key, opts)
-      opts[:key] = key
+    def _validator_opts(opts)
       glob_opts.merge(opts)
     end
 
-    def _create_validator(key, opts)
-      ValidatorFactory.get_instance type: opts[:type], opts: _validator_opts(key, opts)
+    def _create_validator(opts)
+      ValidatorFactory.get_instance type: opts[:type], opts: _validator_opts(opts)
     end
 
     def _node_generator(opts = {})
@@ -98,7 +102,7 @@ module EasyJSONMatcher
     end
 
     def node
-      @node ||= Node.new(opts: _validator_opts(name, options))
+      @node ||= Node.new(opts: _validator_opts(options))
     end
   end
 end

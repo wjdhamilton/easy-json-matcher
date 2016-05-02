@@ -11,19 +11,19 @@ module EasyJSONMatcher
       @string_validator = _create_validator(type: :string)
     end
 
-    def _validate
-      _validate_string
-      _validate_date
+    def _validate(candidate)
+      _validate_string(candidate)
+      _validate_date(candidate) if _no_errors?
     end
 
-    def _content_is_a_string?
-      string_validator.valid? content
+    def _candidate_is_a_string?(candidate)
+      string_validator.valid? candidate
     end
 
-    def _content_is_a_date?
+    def _candidate_is_a_date?(candidate)
       require 'date'
       begin
-        Date.strptime(content, date_format)
+        Date.strptime(candidate, date_format)
       rescue ArgumentError
         false
       end
@@ -33,12 +33,12 @@ module EasyJSONMatcher
       @date_format || DEFAULT_DATE_FORMAT
     end
 
-    def _validate_string
-      errors << "#{content} must be provided as a String for Date validation" unless _content_is_a_string?
+    def _validate_string(candidate)
+      errors << "#{candidate} must be provided as a String for Date validation" unless _candidate_is_a_string?(candidate)
     end
 
-    def _validate_date
-      errors << "#{content} is not a Date" unless _content_is_a_date?
+    def _validate_date(candidate)
+      errors << "#{candidate} is not a Date" unless _candidate_is_a_date?(candidate)
     end
   end
 end
