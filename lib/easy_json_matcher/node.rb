@@ -11,6 +11,7 @@ module EasyJSONMatcher
 
     def initialize(opts: {})
       @key = opts[:key]
+      @strict = opts[:strict]
       @validators = ValidatorSet.new
       @node_validator = opts[:validate_with] || _default_validator
       @options = opts
@@ -23,17 +24,20 @@ module EasyJSONMatcher
 
    def add_validator(key:, validator:)
       validators.add_validator(key: key, validator: validator)
+      node_validator.add_key(key) if strict
     end
 
     def valid?(candidate)
-      _set_content(candidate)
-      _validate_strict_keyset(candidate)
-      _find_errors
+      candidate = _set_content(candidate)
+      if _no_errors?
+        _validate_strict_keyset(candidate)
+        _find_errors(candidate)
+      end
       _no_errors?
     end
 
-    def _find_errors
-      errors << validators.get_errors unless validators.valid? self
+    def _find_errors(candidate)
+      errors << validators.get_errors unless validators.valid? candidate
     end
 
     def _no_errors?
@@ -62,7 +66,7 @@ module EasyJSONMatcher
     end
 
     def _set_content(candidate)
-      @content = _is_root? ? _prep_root_content(candidate) : candidate[key]
+      _is_root? ? _prep_root_content(candidate) : candidate[key]
     end
 
     def _is_root?
@@ -107,10 +111,20 @@ module EasyJSONMatcher
 
     def _parse_and_verify_json(json)
       begin
-        JSON.parse(json)
+        candidate = JSON.parse(json)
+        symbolize_keys hash: candidate
       rescue JSON::ParserError
         errors << '#{json} is not a valid JSON String'
       end
+    end
+
+    def symbolize_keys(hash:)
+      hash.keys.each do |key|
+        value = hash.delete(key)
+        symbolize_keys(hash: value) if value.is_a? Hash
+        hash[key.to_sym] = value
+      end
+      hash
     end
   end
 end
