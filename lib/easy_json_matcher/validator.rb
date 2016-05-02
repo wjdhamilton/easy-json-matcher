@@ -35,12 +35,7 @@ module EasyJSONMatcher
     # Hook.
     # This method returns the errors that this validator has found in the candidate.
     def get_errors
-      error_message = {}
-      # Should the method just add errors even if there has been no error? Would
-      # avoid undefined method [] for nil:NilClass if you look for a key where
-      # there is no error but it would also make the output harder to read...
-      error_message[key.to_sym] = errors
-      error_message
+      errors
     end
 
     def _check_required?
@@ -73,6 +68,10 @@ module EasyJSONMatcher
 
     def _no_errors?
       errors.empty?
+    end
+
+    def reset!
+      errors.clear
     end
   end
 end

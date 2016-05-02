@@ -18,8 +18,6 @@ class CustomValidationsTest < ActiveSupport::TestCase
       a_string: 'hi'
     }.to_json
 
-    test_schema.reset!
-
     assert(test_schema.valid?(should_validate), test_schema.get_errors)
   end
 end

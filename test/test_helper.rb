@@ -4,6 +4,7 @@ require 'minitest/autorun'
 require 'active_support'
 require 'mocha/mini_test'
 require 'easy_json_matcher'
+require 'pp'
 
 # Filter out Minitest backtrace while allowing backtrace from other libraries
 # to be shown.
