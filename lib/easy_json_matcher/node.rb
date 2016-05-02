@@ -15,29 +15,27 @@ module EasyJSONMatcher
       @validators = ValidatorSet.new
       @node_validator = opts[:validate_with] || _default_validator
       @options = opts
-      @errors = []
+      @errors = {}
     end
 
     def _default_validator
       ObjectValidator.new(options: { key: key })
     end
 
-   def add_validator(key:, validator:)
+    def add_validator(key:, validator:)
       validators.add_validator(key: key, validator: validator)
       node_validator.add_key(key) if strict
     end
 
     def valid?(candidate)
-      candidate = _set_content(candidate)
-      if _no_errors?
-        _validate_strict_keyset(candidate)
-        _find_errors(candidate)
-      end
+      return false unless candidate.is_a? Hash
+      _validate_strict_keyset(candidate)
+      _find_errors(candidate)
       _no_errors?
     end
 
     def _find_errors(candidate)
-      errors << validators.get_errors unless validators.valid? candidate
+      errors.merge!(validators.get_errors) unless validators.valid? candidate
     end
 
     def _no_errors?
@@ -50,81 +48,11 @@ module EasyJSONMatcher
     end
 
     def _validate_strict_keyset(candidate)
-      errors << node_validator.get_errors unless node_validator.valid?(candidate)
-    end
-
-    def _validate_keyset
-      unexpected_keys = keys - _expected_keys
-      errors << "#{unexpected_keys} found in addition to expected keys" unless unexpected_keys.empty?
-    end
-
-    def _expected_keys
-      # Horrible hacky thing to be sorted soon
-      validators.validators.each_with_object([]) do |validator, keyset|
-        keyset << validator.key
-      end
-    end
-
-    def _set_content(candidate)
-      _is_root? ? _prep_root_content(candidate) : candidate[key]
-    end
-
-    def _is_root?
-      key.nil?
+      errors[:node_errors] = node_validator.get_errors unless node_validator.valid?(candidate)
     end
 
     def get_errors
-      child_errors = _collect_child_errors
-      _wrap_errors(child_errors)
-    end
-
-    def _collect_child_errors
-      validators.get_errors
-    end
-
-    def _wrap_errors(child_errors)
-      _add_local_errors_to child_errors
-      unless _is_root?
-        _wrap_child_errors(child_errors)
-      else
-        _root_errors(child_errors)
-      end
-    end
-
-    def _add_local_errors_to(child_errors)
-      child_errors.merge!({node_errors_: errors}) unless errors.empty?
-    end
-
-    def _wrap_child_errors(child_errors)
-      errors_wrapper = {}
-      errors_wrapper[key] = child_errors
-      errors_wrapper
-    end
-
-    def _root_errors(child_errors)
-      errors.length > 0 ? {root: errors}.merge(child_errors) : child_errors
-    end
-
-    def _prep_root_content(candidate)
-       candidate.is_a?(String) ? _parse_and_verify_json(candidate) : candidate
-    end
-
-    def _parse_and_verify_json(json)
-      begin
-        candidate = JSON.parse(json)
-        symbolize_keys hash: candidate
-      rescue JSON::ParserError
-        errors << '#{json} is not a valid JSON String'
-      end
-    end
-
-    def symbolize_keys(hash:)
-      hash.keys.each do |key|
-        value = hash.delete(key)
-        symbolize_keys(hash: value) if value.is_a? Hash
-        hash[key.to_sym] = value
-      end
-      hash
+      errors
     end
   end
 end
