@@ -13,22 +13,13 @@ module EasyJSONMatcher
       validators[key] = validator
     end
 
-    def valid?(candidate)
-      return true unless _validation_failed?(candidate)
-    end
-
-    def get_errors
-      validators.each_with_object({}) {|val, errors| errors[val[0]] = val[1].get_errors}
-    end
-
-    def _validation_failed?(candidate)
-      validators.map {|k,v|
-        v.valid?(candidate[k])
-      }.include? false
-    end
-
-    def reset!
-      validators.values.each(&:reset!)
+    def check(value:, errors:[])
+      errors << validators.each_with_object({}) do |k_v, errors_found|
+        key = k_v[0]
+        val = value[key]
+        validator = k_v[1]
+        errors_found[key] = validator.check(value: val)
+      end
     end
   end
 end

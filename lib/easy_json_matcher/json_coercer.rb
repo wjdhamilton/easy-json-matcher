@@ -1,33 +1,15 @@
-require "easy_json_matcher"
 require "json"
+require "easy_json_matcher/coercion_error"
 
 module EasyJSONMatcher
-  class RootAdapter
+  class JsonCoercer
 
-    attr_reader :node, :errors
-
-    def initialize(node:, opts:{})
-      @node = node
-      @errors = []
-    end
-
-    def valid?(candidate)
-      validate(candidate).empty?
-    end
-
-    def validate(candidate)
-      errors = {}
-      candidate = coerce(candidate, errors)
-      return errors unless errors.empty?
-      errors.merge(node.validate(candidate))
-    end
-
-    def coerce(candidate, errors)
+    def coerce(json:)
       begin
-        coerced = JSON.parse(candidate)
+        coerced = JSON.parse(json)
         symbolize_keys(hash: coerced)
       rescue JSON::ParserError
-        errors[:root] = ["#{candidate} is not a valid JSON String"]
+        raise CoercionError.new invalid_string: json
       end
     end
 

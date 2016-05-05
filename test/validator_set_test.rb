@@ -22,15 +22,6 @@ class ValidatorSetTest < ActiveSupport::TestCase
     assert(subject.validators.values.include?(test_val), 'test_val should be found in subject')
   end
 
-  test "ValidatorSet should call valid? on all its validators" do
-    mock_validators = { key1: mock_validator, key2: mock_validator }
-    mock_validators.each_pair do |key, mock|
-      @subject.add_validator(key: key, validator: mock)
-    end
-    call_validate(candidate: { key1: "test", key2: "test" })
-    mock_validators.values.each(&:verify)
-  end
-
   test "ValidatorSet#valid? should return true if all its validators validate
   their candidates" do
     mock_validators = {key1: mock_validator, key2: mock_validator }
@@ -50,32 +41,27 @@ class ValidatorSetTest < ActiveSupport::TestCase
   end
 
   test "ValidatorSet should return error messages in a hash" do
-    @subject.add_validator(key: :invalid, validator: mock_with_errors)
-    assert(@subject.get_errors.is_a?(Hash))
+    @subject.add_validator(key: :invalid, validator: mock_validator)
+    assert(@subject.validate({}).is_a?(Hash))
   end
 
   test "ValidatorSet should return the error messages for all its validators" do
-    error_hash_a = mock_with_errors error_message:  "a" 
-    error_hash_b = mock_with_errors error_message:  "b" 
+    error_hash_a = mock_validator validity: false, error_message:  "a" 
+    error_hash_b = mock_validator validity: false, error_message:  "b" 
     @subject.add_validator(key: :a, validator: error_hash_a)
     @subject.add_validator(key: :b, validator: error_hash_b)
-    expected_error_message = { a: "a", b: "b" }
-    assert_equal(expected_error_message, @subject.get_errors) 
-  end
-
-  def mock_with_errors(error_message: "error message" )
-    validator = MiniTest::Mock.new
-    validator.expect(:get_errors, error_message)
-    validator
+    expected_error_message = { a: ["a"], b: ["b"] }
+    assert_equal(expected_error_message, @subject.validate({})) 
   end
 
   def call_validate(candidate: {})
     subject.valid?(candidate)
   end
 
-  def mock_validator(validity: true)
+  def mock_validator(validity: true, error_message: nil)
     mock = MiniTest::Mock.new
-    mock.expect(:valid?, validity,[String])
+    mock.expect(:valid?, validity,[Object])
+    mock.expect(:validate, [error_message], [Object])
   end
 
 end

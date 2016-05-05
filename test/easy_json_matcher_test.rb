@@ -43,6 +43,7 @@ class EasyJSONMatcherTest < ActiveSupport::TestCase
       string: "Mrs Mogs Hamilton"
     }.to_json
 
+
     assert(test_schema.valid?(valid_json), 'String was not validated')
 
     # There isn't really a clear case for the string validator picking up if a
@@ -66,6 +67,7 @@ class EasyJSONMatcherTest < ActiveSupport::TestCase
     valid_json = {
       number: 5.55,
     }.to_json
+
 
     assert(test_schema.valid?(valid_json), "Number was not validated")
 
@@ -99,7 +101,6 @@ class EasyJSONMatcherTest < ActiveSupport::TestCase
       false: "wibble"
     }.to_json
 
-    # byebug
     assert_not(test_schema.valid?(invalid_json), "\"1\" and \"wibble\" are not valid boolean values")
   end
 

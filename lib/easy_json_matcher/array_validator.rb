@@ -1,7 +1,11 @@
 require 'easy_json_matcher/validator'
 module EasyJSONMatcher
-  class ArrayValidator < Validator
-    attr_reader :validators, :validator_results
+  class ArrayValidator 
+    attr_reader :validators, :validator_results, :errors
+
+    def initialize
+      @errors = []
+    end
 ######################### Methods for requiring values by type #################
 
     def should_only_contain_strings(opts: {})
@@ -34,14 +38,18 @@ module EasyJSONMatcher
 
     def should_only_contain(type:,opts: {})
       _clear_validators
-      _add_validator(_create_validator(type: type, opts: opts))
+      _add_validator(create_validator(type: type, opts: opts))
     end
 
 ######################## Private methods #######################################
 
-    def _validate(candidate_array)
+    def valid?(candidate_array)
       errors << "#{candidate_array} is not an Array" unless candidate_is_array? candidate_array
       _validate_array(candidate_array)
+    end
+
+    def validate(candidate_array)
+      []
     end
 
     def candidate_is_array?(candidate)
@@ -58,6 +66,10 @@ module EasyJSONMatcher
       validators.clear
     end
 
+    def create_validator(type:, opts:)
+      ValidatorFactory.get_instance(type: type, opts: opts)
+    end
+
     def _add_validator(validator)
       validators << validator
     end
@@ -68,9 +80,8 @@ module EasyJSONMatcher
 
     def _accumulate_errors(validator, array)
       array.each do |candidate|
-        _run_validator(validator, candidate)
+        errors << validator.validate(candidate)
       end
-      errors << validator.errors unless validator._no_errors?
     end
 
     def _run_validator(validator, candidate)

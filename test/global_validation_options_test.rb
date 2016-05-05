@@ -16,9 +16,9 @@ class GlobalValidationOptionsTest < ActiveSupport::TestCase
       }
     }.to_json
 
-    assert_not(test_schema.valid?invalid)
-    implicitly_required_error = test_schema.get_errors[:implicitly_required][0]
-    nested_implicitly_required_error = test_schema.get_errors[:also_implicitly_required][:nested_implicitly_required][0]
+    errors = test_schema.validate(invalid)
+    implicitly_required_error = errors[:implicitly_required][0]
+    nested_implicitly_required_error = errors[:also_implicitly_required][:nested_implicitly_required][0]
     error_message = /Value was not present/
     assert_match(error_message, implicitly_required_error)
     assert_match(error_message, nested_implicitly_required_error)
@@ -38,9 +38,9 @@ class GlobalValidationOptionsTest < ActiveSupport::TestCase
       }
     }.to_json
 
-    assert_not(test_schema.valid?invalid)
-    implicitly_required_error = test_schema.get_errors[:implicitly_required][0]
-    nested_implicitly_required_error = test_schema.get_errors[:also_implicitly_required]
+    errors = test_schema.validate(invalid)
+    implicitly_required_error = errors[:implicitly_required][0]
+    nested_implicitly_required_error = errors[:also_implicitly_required]
     error_message = /Value was not present/
     assert_match(error_message, implicitly_required_error)
     assert(nested_implicitly_required_error.empty?)

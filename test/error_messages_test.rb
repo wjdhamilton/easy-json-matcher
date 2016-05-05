@@ -28,8 +28,8 @@ class ErrorMessagesTest < ActiveSupport::TestCase
 
     # Generate error messages. Better test that the thing is definitely invalid too...
     assert_not(test_schema.valid? has_errors)
-    assert_match(/.*is not a String/, test_schema.get_errors[:oops][0])
-    assert_match( /.*is not a String/, test_schema.get_errors[:nested_oops][:bigger_oops][0])
+    assert_match(/.*is not a String/, test_schema.validate(has_errors)[:oops][0])
+    assert_match( /.*is not a String/, test_schema.validate(has_errors)[:nested_oops][:bigger_oops][0])
   end
 
   test "As a user, given that I have specified that an array should be mapped to a key and that the actual value
@@ -46,9 +46,8 @@ class ErrorMessagesTest < ActiveSupport::TestCase
     #As above just check that the validator is actually behaving itself
     assert_not(test_schema.valid? wrong_type)
 
-    assert_match(/.*is not an Array/, test_schema.get_errors[:arr][0])
-  end
-
+    assert_match(/.*is not an Array/, test_schema.validate(has_errors)[:arr][0])
+  end 
   test "As a user, given that I have specified that an array should contain a specific
         type of value and the array contains other types of value, I want to know which
         value was the wrong type and why" do
@@ -64,7 +63,7 @@ class ErrorMessagesTest < ActiveSupport::TestCase
         }.to_json
 
         assert_not(test_schema.valid? episodes_where_sheldon_says_bazinga_in_series_2)
-        assert_match(/.* is not a String/, test_schema.get_errors[:array][0][0])
+        assert_match(/.* is not a String/, test_schema.validate(episodes_where_sheldon_says_bazinga_in_series_2)[:array][0][0])
   end
 
   test "As a user, given that I have specified that a boolean should map to a given
@@ -81,7 +80,7 @@ class ErrorMessagesTest < ActiveSupport::TestCase
 
     assert_not(test_schema.valid? no_bool)
 
-    assert_match(/.* is not a Boolean/, test_schema.get_errors[:bool][0])
+    assert_match(/.* is not a Boolean/, test_schema.validate(no_bool)[:bool][0])
   end
 
   test "I want to be informed if an expected date is not a date" do
@@ -95,7 +94,7 @@ class ErrorMessagesTest < ActiveSupport::TestCase
      }.to_json
 
      assert_not(test_schema.valid? no_date)
-     assert_match(/.* is not a Date/, test_schema.get_errors[:date][0])
+     assert_match(/.* is not a valid SQL date/, test_schema.validate(no_date)[:date][0])
   end
 
   test "As a user, given that I have specified that a value should be a number,
@@ -111,7 +110,7 @@ class ErrorMessagesTest < ActiveSupport::TestCase
 
 
     assert_not(test_schema.valid? no_number)
-    assert_match(/.* is not a Number/, test_schema.get_errors[:number][0])
+    assert_match(/.* is not a Number/, test_schema.validate(no_number)[:number][0])
   end
 
   test "As a user, given that I have specified that a value should be an object,
@@ -126,7 +125,7 @@ class ErrorMessagesTest < ActiveSupport::TestCase
     }.to_json
 
     assert_not(test_schema.valid? no_object)
-    assert_match(/.* is not an Object/, test_schema.get_errors[:object][0])
+    assert_match(/.* is not an Object/, test_schema.validate(no_object)[:object][0])
   end
 
   test "As a user, given that I have supplied an invalid JSON object, I want an
@@ -139,6 +138,6 @@ class ErrorMessagesTest < ActiveSupport::TestCase
     not_json = 'this is not a JSON String'
 
     test_schema.valid? not_json
-    assert_match(/.* is not a valid JSON String/, test_schema.get_errors[:root][0])
+    assert_match(/.* is not a valid JSON String/, test_schema.validate(not_json)[:root][0])
   end
 end

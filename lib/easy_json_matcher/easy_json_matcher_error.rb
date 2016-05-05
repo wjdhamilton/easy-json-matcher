@@ -1,5 +1,5 @@
 module EasyJSONMatcher
-  class ValidationError < Error
+  class EasyJSONMatcherError < Error
 
     def initialize(error_details)
       super(error_details)
