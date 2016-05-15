@@ -1,5 +1,6 @@
+
 module EasyJSONMatcher
-  class EasyJSONMatcherError < Error
+  class EasyJSONMatcherError < RuntimeError
 
     def initialize(error_details)
       super(error_details)

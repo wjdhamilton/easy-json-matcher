@@ -1,6 +1,8 @@
 require "easy_json_matcher/array_validator"
 require "easy_json_matcher/validation_step"
 
+#TODO Is this class in use any more?
+
 module EasyJSONMatcher
   class ValidatorFactory
 

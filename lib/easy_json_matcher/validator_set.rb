@@ -9,17 +9,20 @@ module EasyJSONMatcher
       @validators = {}
     end
 
-    def add_validator(key:, validator:, opts: {})
+    def add_validator(key:, validator:)
       validators[key] = validator
     end
 
     def check(value:, errors:[])
-      errors << validators.each_with_object({}) do |k_v, errors_found|
+      error_hash = validators.each_with_object({}) do |k_v, errors_found|
         key = k_v[0]
         val = value[key]
         validator = k_v[1]
-        errors_found[key] = validator.check(value: val)
+        results = validator.check(value: val)
+        errors_found[key] = results unless results.empty?
       end
+      errors << error_hash unless error_hash.empty?
+      errors
     end
   end
 end

@@ -1,11 +1,14 @@
+require 'easy_json_matcher/json_coercer'
+
 module EasyJSONMatcher
   class Validator
 
-    attr_reader :validation_chain, :required, :errors, :custom_validator, :opts
+    attr_reader :validation_chain, :coercer
     attr_accessor :key
 
-    def initialize(options: {})
-      @validation_chain = options[:validate_with]
+    def initialize(validate_with:, coerce_with: JsonCoercer.new)
+      @validation_chain = validate_with
+      @coercer = coerce_with
     end
 
     # Hook. Allows further setup to be carried out by subclasses
@@ -17,6 +20,7 @@ module EasyJSONMatcher
     end
 
     def validate(candidate:)
+      candidate = coercer.coerce(json: candidate)
       validation_chain.check(value: candidate)
     end
   end
