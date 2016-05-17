@@ -10,9 +10,10 @@ module EasyJSONMatcher
 
     #TODO should really use dependency injection here for ValidatorSet. 
 
-    def initialize(validator:)
-      @node_validator = validator
+    def initialize(opts: [], content_handler: ValidatorSet, factory: ValidationChainFactory)
+      @node_validator = factory.get_chain(steps: opts + [:object])
       @validators = ValidatorSet.new
+      @node_validator.concat(@validators)
     end
 
     def check(value:, errors:[])

@@ -8,17 +8,16 @@ module EasyJSONMatcher
     describe "#add_validator" do
 
       it "should respond to #add_validator" do
-        Node.new(validator: nil).must_respond_to :add_validator
+        Node.new.must_respond_to :add_validator
       end
 
       it "should respond to #check" do
-        Node.new(validator: nil).must_respond_to :check
+        Node.new.must_respond_to :check
       end
 
       it "should send call to its own validator" do
-        validator = ValidationChainFactory.get_chain(steps: [:required, :object])
         test_value = { a: 1, b: 2, c: 3 }
-        node = Node.new(validator: validator)
+        node = Node.new(opts: [:required])
         node.add_validator(key: :a, validator: ValidationChainFactory.get_chain(steps: [:string]))
         node.add_validator(key: :b, validator: ValidationChainFactory.get_chain(steps: [:string]))
         node.add_validator(key: :c, validator: ValidationChainFactory.get_chain(steps: [:string]))
