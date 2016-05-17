@@ -8,6 +8,8 @@ module EasyJSONMatcher
 
     def_delegator :@validators, :add_validator
 
+    #TODO should really use dependency injection here for ValidatorSet. 
+
     def initialize(validator:)
       @node_validator = validator
       @validators = ValidatorSet.new

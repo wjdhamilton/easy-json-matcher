@@ -39,7 +39,10 @@ module EasyJSONMatcher
     end
   },
     array: ->(value, errors){
-      ArrayValidator.new
+    unless value.is_a? Array
+      errors << "Value was not an array"
+      false
+    end
   },
     value: ->(value, errors){
     errors << "was not present" if value.nil? || value == ""

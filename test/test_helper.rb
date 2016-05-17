@@ -1,10 +1,11 @@
-require 'pretty_backtrace/enable'
-require 'minitest'
-require 'minitest/autorun'
-require 'active_support'
-require 'mocha/mini_test'
-require 'easy_json_matcher'
-require 'pp'
+require "pretty_backtrace/enable"
+require "minitest"
+require "minitest/autorun"
+require "active_support"
+require "mocha/mini_test"
+require "easy_json_matcher"
+require "pp"
+require "byebug"
 
 # Filter out Minitest backtrace while allowing backtrace from other libraries
 # to be shown.

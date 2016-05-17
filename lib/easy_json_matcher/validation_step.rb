@@ -13,7 +13,7 @@ module EasyJSONMatcher
     end
 
     def check(value:, errors: [])
-      if verifier.call(value, errors) == false || next_step.nil?
+      if verifier.call(value, errors) == false || is_tail?
         return errors
       else
         return next_step.check(value: value, errors: errors)
@@ -22,6 +22,18 @@ module EasyJSONMatcher
 
     def >>(step)
       @next_step = step
+    end
+
+    def concat(chain)
+      if is_tail?
+        self.>> chain
+      else
+        next_step.concat(chain)
+      end
+    end
+
+    def is_tail?
+      next_step.nil?
     end
   end
 end
