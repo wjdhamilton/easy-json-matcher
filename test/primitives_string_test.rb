@@ -15,12 +15,12 @@ module EasyJSONMatcher
     end
 
     it "should validate Strings" do
-      candidate = { string: "hello" }
+      candidate = { string: "hello" }.to_json
       @test_schema.validate(candidate: candidate).must_be :empty?
     end
 
     it "should return errors for non-strings" do
-      candidate = { string: 1 }
+      candidate = { string: 1 }.to_json
       @test_schema.validate(candidate: candidate).wont_be :empty?
     end
   end

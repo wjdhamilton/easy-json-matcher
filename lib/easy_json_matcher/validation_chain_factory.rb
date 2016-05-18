@@ -1,11 +1,12 @@
 require "easy_json_matcher/validation_step"
 require "easy_json_matcher/unknown_validation_step_error"
+require "easy_json_matcher/exceptions"
 
 module EasyJSONMatcher
   class ValidationChainFactory
 
     class << self
-   
+
       def get_chain(steps:, of: ValidationStep)
         head = create_head_for(steps: steps, step_type: of)
         assemble_chain(head: head, steps: steps, step_type: of)
@@ -17,7 +18,7 @@ module EasyJSONMatcher
           last_link >> get_step_for(validating: step, using: step_type)
         end
       end
-      
+
       def create_head_for(steps:, step_type:)
         is_required = steps.include?(:required)
         get_step_for validating: is_required ? :required : :not_required, using: step_type
@@ -29,7 +30,12 @@ module EasyJSONMatcher
         elsif verifier = standard_validator(with: validating)
           using.new verify_with: verifier
         else
-          raise UnknownValidationStepError.new(type: validating)
+          begin
+           return SchemaLibrary.get_schema(name: validating)
+          rescue MissingSchemaException => ex
+            #TODO this needs a little finesse: How will the user know if it was a missing schema?
+            raise UnknownValidationStepError.new(type: validating)
+          end
         end
       end
 

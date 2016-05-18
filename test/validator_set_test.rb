@@ -1,6 +1,5 @@
 require 'test_helper'
-require_relative '../lib/easy_json_matcher/validator_set.rb'
-require "validator_interface_test"
+require 'easy_json_matcher/validator_set.rb'
 
 class ValidatorSetTest < ActiveSupport::TestCase
 
@@ -42,7 +41,7 @@ class ValidatorSetTest < ActiveSupport::TestCase
 
   test "ValidatorSet should return error messages in a hash" do
     @subject.add_validator(key: :invalid, validator: mock_validator)
-    assert(@subject.validate({}).is_a?(Hash))
+    assert(@subject.check(value: {}).is_a?(Array))
   end
 
   test "ValidatorSet should return the error messages for all its validators" do
@@ -50,18 +49,17 @@ class ValidatorSetTest < ActiveSupport::TestCase
     error_hash_b = mock_validator validity: false, error_message:  "b" 
     @subject.add_validator(key: :a, validator: error_hash_a)
     @subject.add_validator(key: :b, validator: error_hash_b)
-    expected_error_message = { a: ["a"], b: ["b"] }
-    assert_equal(expected_error_message, @subject.validate({})) 
+    expected_error_message = [ { a: ["a"], b: ["b"] } ]
+    assert_equal(expected_error_message, @subject.check(value: {})) 
   end
 
   def call_validate(candidate: {})
-    subject.valid?(candidate)
+    subject.check(value: candidate).empty?
   end
 
   def mock_validator(validity: true, error_message: nil)
     mock = MiniTest::Mock.new
-    mock.expect(:valid?, validity,[Object])
-    mock.expect(:validate, [error_message], [Object])
+    mock.expect(:check, validity ? [] : [error_message], [Object])
   end
 
 end

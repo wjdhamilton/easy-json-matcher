@@ -27,7 +27,7 @@ module EasyJSONMatcher
     error_message = "#{value} is not a valid SQL date"
     begin
       Date.strptime(value,"%Y-%m-%d")
-    rescue ArgumentError
+    rescue ArgumentError, TypeError
       errors << error_message
     end
   },
@@ -45,7 +45,7 @@ module EasyJSONMatcher
     end
   },
     value: ->(value, errors){
-    errors << "was not present" if value.nil? || value == ""
+    # This is a bit of a toughie since value can be any value, including nil
   },
     not_required: ->(value, errors){
     false if value.nil?

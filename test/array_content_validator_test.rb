@@ -9,24 +9,9 @@ module EasyJSONMatcher
         mock_val = Minitest::Mock.new
         mock_val.expect(:hello, "hi")
       end
-      subject = ArrayContentValidator.new(verify_with: ->(value, errors) { value.hello })
+      subject = ArrayContentValidator.new( verify_with: ValidationStep.new(verify_with: ->(value, errors) { value.hello }))
       subject.check value: mock_values
       mock_values.each(&:verify)
-    end
-
-    it "should forward errors on to the next step of there is one" do
-      mock_step = Minitest::Mock.new
-      mock_step.expect(:check, [], [ Array ])
-      subject = ArrayContentValidator.new(verify_with: ->(value, errors) { })
-      subject >> mock_step
-      subject.check(value: [])
-      mock_step.verify
-    end
-
-    it "should stop iterating over the array if verifier return false" do
-      candidate = [1,1]
-      subject = ArrayContentValidator.new(verify_with: ->(value, errors) { errors << "stop"; false })
-      subject.check(value: candidate).length.must_be :==, 1
     end
   end
 end

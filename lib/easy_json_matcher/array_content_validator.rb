@@ -9,9 +9,9 @@ module EasyJSONMatcher
 
     def check(value:, errors: [])
       value.each do |val|
-        break unless verifier.call(val, errors)
+        break unless verifier.check(value: val, errors: errors)
       end
-      return next_step.check(value: value) if next_step or return errors
+      errors
     end
 
     def >> (step)

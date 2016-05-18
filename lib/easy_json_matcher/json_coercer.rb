@@ -8,7 +8,7 @@ module EasyJSONMatcher
       begin
         coerced = JSON.parse(json)
         symbolize_keys(hash: coerced)
-      rescue JSON::ParserError
+      rescue JSON::ParserError, TypeError
         raise CoercionError.new invalid_string: json
       end
     end
