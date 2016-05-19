@@ -3,14 +3,11 @@ require 'easy_json_matcher'
 module EasyJSONMatcher
   class ValidatorSet
 
-    attr_accessor :validators
+    attr_accessor :validators, :strict
 
-    def initialize
-      @validators = {}
-    end
-
-    def add_validator(key:, validator:)
-      validators[key] = validator
+    def initialize(validators:, strict: false)
+      @validators = validators
+      @strict = strict
     end
 
     def check(value:, errors:[])
@@ -21,8 +18,14 @@ module EasyJSONMatcher
         results = validator.check(value: val)
         errors_found[key] = results unless results.empty?
       end
+      validate_strict_keyset(keys: validators.keys, candidates: value.keys, errors: error_hash) if strict
       errors << error_hash unless error_hash.empty?
       errors
+    end
+
+    def validate_strict_keyset(keys:, errors:, candidates:)
+      rogue_keys = candidates - keys
+      errors[:unexpected_keys] = "Unexpected keys: #{rogue_keys}" unless rogue_keys.empty?
     end
   end
 end

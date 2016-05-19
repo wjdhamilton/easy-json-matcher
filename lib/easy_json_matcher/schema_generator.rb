@@ -3,6 +3,7 @@ require "easy_json_matcher/node"
 require "easy_json_matcher/schema_library"
 require "easy_json_matcher/validator"
 require "easy_json_matcher/attribute_type_methods"
+require "easy_json_matcher/node_generator"
 
 module EasyJSONMatcher
   class SchemaGenerator
@@ -14,8 +15,8 @@ module EasyJSONMatcher
       @glob_opts = global_opts
       @att_glob_opts = glob_opts.dup
       @att_glob_opts.delete(:strict)
-      @node = create_node(opts: opts)
-      yield self if block_given?
+      @node = node_generator(opts: opts, globals: global_opts)
+      yield node if block_given?
     end
 
     def create_node(opts:)
@@ -59,17 +60,21 @@ module EasyJSONMatcher
 
     ################ Methods for generating the schema #########################
 
+    def generate_node
+      node.generate_node
+    end
+
     def generate_schema
-      Validator.new validate_with: node
+      Validator.new validate_with: generate_node
     end
 
     def register(as:)
-      SchemaLibrary.add_schema(name: as, schema: node)
+      SchemaLibrary.add_schema(name: as, schema: generate_node)
       generate_schema
     end
 
-    def node_generator(opts: {})
-     self.class.new opts: opts, global_opts: glob_opts
+    def node_generator(opts:, globals:)
+      NodeGenerator.new(opts: opts, global_opts: globals)
     end
   end
 end
