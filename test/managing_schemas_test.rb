@@ -19,7 +19,7 @@ module EasyJSONMatcher
       candidate = {
         name: "Green Mandarin"
       }.to_json
-      schema = Validator.new validate_with: SchemaLibrary.get_schema(name: @name)
+      schema = SchemaLibrary.use_schema(name: @name)
       assert(schema.valid?(candidate: candidate), "test_schema did not validate correctly")
     end
 
