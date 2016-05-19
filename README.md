@@ -1,6 +1,6 @@
 #EasyJSONMatcher
 
-This gem is designed to make it easy for you to validate JSON objects in Ruby.
+This gem is designed to make it easy for you to validate JSON objects in Ruby. It's a lightweight gem primarily designed to be used in testing. If you want something more comprehensive for a production environment I suggest you look at (dry-validation)[https://github.com/dry-rb/dry-validation].
 
 The interface uses a plain Ruby DSL to make representing expected JSON output in your test suites very straightforward. No need to work in any other language or even create additional files to store your schemas if you don't want to.  
 
@@ -37,14 +37,14 @@ Using curly braces is preferable to `do...end` since the new `SchemaGenerator` o
 The `SchemaGenerator` interface provides a series of messages which you can use to define your schema. The simplest of these define expected primitive values as follows:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new {|json_schema|
+EasyJSONMatcher::SchemaGenerator.new { |json_schema|
     json_schema.has_number  key: :number
     json_schema.has_boolean key: :boolean
     json_schema.has_string  key: :string
     json_schema.has_value   key: :value
     json_schema.has_object  key: :object
 }
-  ```
+```
 
 Which would correctly validate the below JSON string:
 
@@ -57,7 +57,10 @@ Which would correctly validate the below JSON string:
   'object': {}
 }"
 ```
+
 The `#has_object` message only defines a key/value pair where the value is an arbitrary json object. For defining schemas that include the details of nested objects see the section below on `#has_schema` or the section on `#contains_node`.
+
+As a matter of fact, all of these methods are just macros for `NodeGenerator`'s `#has_attribute` method. This method has the following signature: `#has_attribute(key:, opts:)`. So, for instance, `has_string key: :s` expands to `has_attribute key: :s, opts: [:string]`. The reason this is significant is that the library processes the values in your candidate objects in steps, each one defined by a value in the option array where that value is either a predefined operation or is a proc/lambda with the following signature: `->(value) { ... }` and returns an error message if an error is found. So you can specify any number of steps you want for processing the value. See the section on Custom Validations below. 
 
 ####Dates
 Although dates are not part of the JSON specification, they are commonly used in JSON payloads and so a validator is available using the `#has_date` method. It is used as follows:
@@ -76,7 +79,7 @@ which would validate the following json object:
 }"
 ```
 
-EasyJSONMatcher currently only supports dates in the SQL format, i.e. YYYY-MM-DD.
+EasyJSONMatcher currently only supports dates in the SQL format, i.e. YYYY-MM-DD. You can use a proc to verify other date formats.
 
 ###Describing complex objects
 
@@ -167,7 +170,9 @@ Sometimes simply knowing that a value is the correct type and is present isn't e
   }
 ```
 
-Obviously you can reuse the same lamda in different places. The lambda object must return an object which is the error message that is to be used if the value is not valid. 
+Obviously you can reuse the same lamda in different places. The lambda object must return an object which is the error message that is to be used if the value is not valid.
+
+Occasionally, you want to stop the validation process. For instance, if a value is `nil`, then you want to stop the validation process before it reaches any other verification steps where `nil` is unexpected. If you want to halt the process and just return the set of errors generated so far, then your lambda should return `false`. Not false as in false-y. False as in `false.is_a? FalseClass`.
 
 ###Options
 All the messages that define the content of a schema can accept an options hash with the keyword `:opts`, for instance:
