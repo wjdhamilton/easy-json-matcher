@@ -10,7 +10,7 @@ module EasyJSONMatcher
 
     before do
       @test_schema = SchemaGenerator.new { |g|
-        g.has_object key: :object
+        g.has_object key: "object"
       }.generate_schema
     end
 
