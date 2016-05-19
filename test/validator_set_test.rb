@@ -1,5 +1,5 @@
-require 'test_helper'
-require 'easy_json_matcher/validator_set.rb'
+require "test_helper"
+require "easy_json_matcher/validator_set.rb"
 
 module EasyJSONMatcher
 
@@ -12,7 +12,7 @@ module EasyJSONMatcher
     end
 
     it "should return true if all its validators validate their candidates" do
-      mock_validators = {key1: mock_validator, key2: mock_validator }
+      mock_validators = { key1: mock_validator, key2: mock_validator }
       subject = ValidatorSet.new validators: mock_validators
       subject.check(value: {}).must_be :empty?
     end
@@ -29,12 +29,13 @@ module EasyJSONMatcher
     end
 
     it "should return the error messages for all its validators" do
-      error_validators = { a:  mock_validator(validity: false, error_message:  "a"),
-                       b: mock_validator(validity: false, error_message:  "b")
+      error_validators = {
+        a: mock_validator(validity: false, error_message:  "a"),
+        b: mock_validator(validity: false, error_message:  "b")
       }
       subject = ValidatorSet.new(validators: error_validators)
-      expected_error_message = [ { a: ["a"], b: ["b"] } ]
-      assert_equal(expected_error_message, subject.check(value: {})) 
+      expected_error_message = [{ a: ["a"], b: ["b"] }]
+      assert_equal(expected_error_message, subject.check(value: {}))
     end
 
     def mock_validator(validity: true, error_message: nil)
