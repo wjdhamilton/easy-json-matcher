@@ -26,7 +26,7 @@ module EasyJSONMatcher
     end
 
     def concat(chain)
-      is_tail? ? self.>> chain : next_step.concat(chain)
+      is_tail? ? self.>>(chain) : next_step.concat(chain)
     end
 
     def is_tail?
