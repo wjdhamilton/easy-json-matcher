@@ -24,6 +24,10 @@ module EasyJSONMatcher
         schema
       end
 
+      def use_schema(name:, wrap_with: Validator)
+        wrap_with.new validate_with: SCHEMAS[name]
+      end
+
       def _find_and_clone_schema(name)
         s = SCHEMAS[name]
         return s.dup if s or nil
