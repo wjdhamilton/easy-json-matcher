@@ -10,7 +10,7 @@ module EasyJSONMatcher
     def check(value:)
       errors = []
       value.each do |val|
-        errors = errors + verifier.check(value: val)
+        errors += verifier.check(value: val)
       end
       errors
     end
