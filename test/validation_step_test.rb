@@ -18,7 +18,7 @@ module EasyJSONMatcher
       tail = MiniTest::Mock.new
       test_value = "hello!"
       head >> tail
-      tail.expect(:check, nil, [Hash])
+      tail.expect(:check, [], [Hash])
       tail.expect(:nil?, false)
       head.check(value: test_value)
       tail.verify

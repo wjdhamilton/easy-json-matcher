@@ -12,11 +12,12 @@ module EasyJSONMatcher
       @verifier = verify_with
     end
 
-    def check(value:, errors: [])
+    def check(value:)
+      errors = []
       if verifier.call(value, errors) == false || is_tail?
-        return errors
+        errors
       else
-        return next_step.check(value: value, errors: errors)
+        errors + next_step.check(value: value)
       end
     end
 
@@ -25,11 +26,7 @@ module EasyJSONMatcher
     end
 
     def concat(chain)
-      if is_tail?
-        self.>> chain
-      else
-        next_step.concat(chain)
-      end
+      is_tail? ? self.>>(chain) : next_step.concat(chain)
     end
 
     def is_tail?

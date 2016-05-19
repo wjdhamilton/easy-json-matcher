@@ -7,9 +7,10 @@ module EasyJSONMatcher
       @verifier = verify_with
     end
 
-    def check(value:, errors: [])
+    def check(value:)
+      errors = []
       value.each do |val|
-        break unless verifier.check(value: val, errors: errors)
+        errors += verifier.check(value: val)
       end
       errors
     end
