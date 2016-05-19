@@ -1,3 +1,5 @@
+require "easy_json_matcher/array_validator"
+
 module EasyJSONMatcher
   class ArrayGenerator
 
