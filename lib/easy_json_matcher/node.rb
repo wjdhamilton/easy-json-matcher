@@ -11,8 +11,8 @@ module EasyJSONMatcher
       @node_validator.concat(@validators)
     end
 
-    def check(value:, errors:[])
-      node_validator.check(value: value, errors: errors)
+    def check(value:)
+      node_validator.check(value: value)
     end
   end
 end

@@ -18,7 +18,7 @@ module EasyJSONMatcher
       it "should allow the chain to continue if the value is present" do
         head, tail = get_validation_chain
         test_value = 1
-        tail.expect(:check, nil, [{value: 1, errors: []}])
+        tail.expect(:check, [], [{ value: 1 }])
         tail.expect(:nil?, false)
         head.check(value: test_value)
         tail.verify
