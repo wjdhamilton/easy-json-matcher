@@ -1,108 +1,80 @@
-require 'easy_json_matcher/validator_factory'
-require 'easy_json_matcher/node'
-require 'easy_json_matcher/schema_library'
-require 'easy_json_matcher/exceptions'
+require "easy_json_matcher/validation_chain_factory"
+require "easy_json_matcher/node"
+require "easy_json_matcher/schema_library"
+require "easy_json_matcher/validator"
+require "easy_json_matcher/attribute_type_methods"
+require "easy_json_matcher/node_generator"
+
 module EasyJSONMatcher
   class SchemaGenerator
+    include AttributeTypeMethods
 
-    attr_reader :node, :name, :options, :glob_opts
+    attr_reader :node, :glob_opts, :att_glob_opts
 
-    def initialize(opts: {}, global_opts: {})
-      @name = opts.delete(:key)
-      @options = opts
+    def initialize(opts: [], global_opts: [])
       @glob_opts = global_opts
-      yield self if block_given?
+      @att_glob_opts = glob_opts.dup
+      @att_glob_opts.delete(:strict)
+      @node = node_generator(opts: opts, globals: global_opts)
+      yield node if block_given?
     end
 
-    def has_attribute(key:, opts: {})
-      node.add_validator(key: key, validator: _create_validator(opts))
+    def create_node(opts:)
+      Node.new(opts: opts)
+    end
+
+    def has_attribute(key:, opts:)
+      opts = override_globals(local_opts: opts)
+      opts = opts - [:strict]
+      validator = ValidationChainFactory.get_chain(steps: opts)
+      node.add_validator key: key, validator: validator
+    end
+
+    # TODO pretty hacky but can be cleaned later
+    def override_globals(local_opts:)
+      if local_opts.include?(:not_required) && glob_opts.include?(:required)
+         (local_opts + (glob_opts - [:required]))
+      else
+        local_opts + glob_opts
+      end
     end
 
     ################ Methods for adding specific attribute types ##############
 
-    def contains_node(key:, opts: {})
-      opts = opts.merge({ nested: true })
-      generator = _node_generator(_validator_opts(opts))
+    def contains_node(key:, opts: [])
+      generator = node_generator(opts: opts)
       yield generator if block_given?
-      node.add_validator key: key, validator: generator.generate_schema
+      node.add_validator key: key, validator: generator.node
     end
 
-    def has_boolean(key:, opts: {})
-      has_attribute(key: key, opts: opts.merge({type: :boolean}))
-    end
-
-    def has_number(key: , opts: {})
-      has_attribute(key: key, opts: opts.merge({type: :number}))
-    end
-
-    def has_date(key:, opts: {})
-      has_attribute(key: key, opts: opts.merge({type: :date}))
-    end
-
-    def has_object(key:, opts: {})
-      has_attribute(key: key, opts: opts.merge({type: :object}))
-    end
-
-    def has_value(key:, opts: {})
-      has_attribute(key: key, opts: opts.merge({type: :value}))
-    end
-
-    def has_string(key:, opts: {})
-      has_attribute(key: key, opts: opts.merge({type: :string}))
-    end
-
-    def contains_array(key:, opts: {})
-      opts = opts.merge!({type: :array})
-      array_validator = _create_validator(opts)
+    def contains_array(key:, opts: [], with_content:)
+      array_validator = ArrayValidator.new opts: opts, verify_content_as: with_content
       yield array_validator if block_given?
       node.add_validator key: key, validator: array_validator
     end
 
-    def has_schema(key:, opts: {})
-      has_attribute(key: key, opts: opts.merge({type: :schema}))
+    def has_schema(key:, name:)
+      schema = SchemaLibrary.get_schema(name: name)
+      node.add_validator key: key, validator: schema
     end
 
     ################ Methods for generating the schema #########################
 
+    def generate_node
+      node.generate_node
+    end
+
     def generate_schema
-      if options[:nested]
-        node
-      else
-        RootAdapter.new(node: node)
-      end
+      Validator.new validate_with: generate_node
     end
 
     def register(as:)
-      SchemaLibrary.add_schema(name: as, schema: node)
+      SchemaLibrary.add_schema(name: as, schema: generate_node)
       generate_schema
     end
 
-    ################## Private methods #########################################
-
-    def _prep_schema_opts(schema_name, opts)
-      opts[:type] = :schema
-      opts[:name] = schema_name
-      opts
-    end
-
-    def _set_validator_key(validator, key)
-      validator.key = key
-    end
-
-    def _validator_opts(opts)
-      glob_opts.merge(opts)
-    end
-
-    def _create_validator(opts)
-      ValidatorFactory.get_instance type: opts[:type], opts: _validator_opts(opts)
-    end
-
-    def _node_generator(opts = {})
-     self.class.new opts: opts, global_opts: glob_opts
-    end
-
-    def node
-      @node ||= Node.new(opts: _validator_opts(options))
+    def node_generator(opts:, globals:)
+      NodeGenerator.new(opts: opts, global_opts: globals)
     end
   end
 end

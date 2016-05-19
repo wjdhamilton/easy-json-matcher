@@ -3,32 +3,29 @@ require 'easy_json_matcher'
 module EasyJSONMatcher
   class ValidatorSet
 
-    attr_accessor :validators
+    attr_accessor :validators, :strict
 
-    def initialize
-      @validators = {}
+    def initialize(validators:, strict: false)
+      @validators = validators
+      @strict = strict
     end
 
-    def add_validator(key:, validator:, opts: {})
-      validators[key] = validator
+    def check(value:, errors:[])
+      error_hash = validators.each_with_object({}) do |k_v, errors_found|
+        key = k_v[0]
+        val = value[key]
+        validator = k_v[1]
+        results = validator.check(value: val)
+        errors_found[key] = results unless results.empty?
+      end
+      validate_strict_keyset(keys: validators.keys, candidates: value.keys, errors: error_hash) if strict
+      errors << error_hash unless error_hash.empty?
+      errors
     end
 
-    def valid?(candidate)
-      return true unless _validation_failed?(candidate)
-    end
-
-    def get_errors
-      validators.each_with_object({}) {|val, errors| errors[val[0]] = val[1].get_errors}
-    end
-
-    def _validation_failed?(candidate)
-      validators.map {|k,v|
-        v.valid?(candidate[k])
-      }.include? false
-    end
-
-    def reset!
-      validators.values.each(&:reset!)
+    def validate_strict_keyset(keys:, errors:, candidates:)
+      rogue_keys = candidates - keys
+      errors[:unexpected_keys] = "Unexpected keys: #{rogue_keys}" unless rogue_keys.empty?
     end
   end
 end

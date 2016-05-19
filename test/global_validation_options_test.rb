@@ -1,48 +1,43 @@
 require 'test_helper'
 
-class GlobalValidationOptionsTest < ActiveSupport::TestCase
+module EasyJSONMatcher
 
-  test 'As a user I want to be able to set validation options globally when defining the schema' do
+  describe "Global Validation Options" do
 
-    test_schema = EasyJSONMatcher::SchemaGenerator.new(global_opts: { required: true }) { |schema|
-      schema.has_boolean key: :implicitly_required
-      schema.contains_node key: :also_implicitly_required do |n|
-        n.has_boolean key: :nested_implicitly_required
-      end
-    }.generate_schema
 
-    invalid = {
-      also_implicitly_required: {
-      }
-    }.to_json
+    subject {  
+      SchemaGenerator.new(global_opts: [ :required ]) { |schema|
+        schema.has_boolean key: :implicitly_required
+        schema.contains_node key: :also_implicitly_required do |n|
+          n.has_boolean key: :nested_implicitly_required
+          n.has_boolean key: :not_required, opts: [:not_required]
+        end
+      }.generate_schema
+    }
 
-    assert_not(test_schema.valid?invalid)
-    implicitly_required_error = test_schema.get_errors[:implicitly_required][0]
-    nested_implicitly_required_error = test_schema.get_errors[:also_implicitly_required][:nested_implicitly_required][0]
-    error_message = /Value was not present/
-    assert_match(error_message, implicitly_required_error)
-    assert_match(error_message, nested_implicitly_required_error)
-  end
+    let(:invalid_candidate){
+      {
+        also_implicitly_required: {
+          nested_implicitly_required: true
+        }
+      }.to_json
+    }
 
-  test 'As a user I want to be able to override global validation options for specific node' do
+    let(:valid_candidate){
+      {
+        implicitly_required: true,
+        also_implicitly_required: {
+          nested_implicitly_required: true
+        }
+      }.to_json
+    }
 
-    test_schema = EasyJSONMatcher::SchemaGenerator.new(global_opts: { required: true }) { |schema|
-      schema.has_boolean key: :implicitly_required
-      schema.contains_node key: :also_implicitly_required do |n|
-        n.has_boolean key: :nested_implicitly_required, opts: {required: false}
-      end
-    }.generate_schema
+    it "should only apply required to all implicitly required keys" do
+      subject.valid?(candidate: valid_candidate).must_be :===, true
+    end
 
-    invalid = {
-      also_implicitly_required: {
-      }
-    }.to_json
-
-    assert_not(test_schema.valid?invalid)
-    implicitly_required_error = test_schema.get_errors[:implicitly_required][0]
-    nested_implicitly_required_error = test_schema.get_errors[:also_implicitly_required]
-    error_message = /Value was not present/
-    assert_match(error_message, implicitly_required_error)
-    assert(nested_implicitly_required_error.empty?)
+    it "should apply required to all implicitly required keys" do
+      subject.valid?(candidate: invalid_candidate).must_be :===, false
+    end
   end
 end

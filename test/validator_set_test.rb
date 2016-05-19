@@ -1,81 +1,49 @@
-require 'test_helper'
-require_relative '../lib/easy_json_matcher/validator_set.rb'
-require "validator_interface_test"
+require "test_helper"
+require "easy_json_matcher/validator_set.rb"
 
-class ValidatorSetTest < ActiveSupport::TestCase
+module EasyJSONMatcher
 
-  attr_reader :subject
-  class ValidatorDouble
+  describe ValidatorSet do
 
-    def valid?(value)
-      true
+    it "should hold other validators" do
+      test_val = Object.new
+      subject = ValidatorSet.new validators: { test:  test_val }
+      subject.validators.values.include?(test_val).must_be :==, true
+    end
+
+    it "should return true if all its validators validate their candidates" do
+      mock_validators = { key1: mock_validator, key2: mock_validator }
+      subject = ValidatorSet.new validators: mock_validators
+      subject.check(value: {}).must_be :empty?
+    end
+
+    it "should return false if any of its validators find an invalid value" do
+      mock_validators = {
+        key1: mock_validator(validity: true),
+        key2: mock_validator(validity: false)
+      }
+      subject = ValidatorSet.new validators: mock_validators
+      subject.check(value: { key1: "test", key2: "test" }).wont_be :empty?
+    end
+
+    it "should return error messages in a Array" do
+      subject = ValidatorSet.new validators: { invalid: mock_validator }
+      assert(subject.check(value: {}).is_a?(Array))
+    end
+
+    it "should return the error messages for all its validators" do
+      error_validators = {
+        a: mock_validator(validity: false, error_message:  "a"),
+        b: mock_validator(validity: false, error_message:  "b")
+      }
+      subject = ValidatorSet.new(validators: error_validators)
+      expected_error_message = [{ a: ["a"], b: ["b"] }]
+      assert_equal(expected_error_message, subject.check(value: {}))
+    end
+
+    def mock_validator(validity: true, error_message: nil)
+      mock = MiniTest::Mock.new
+      mock.expect(:check, validity ? [] : [error_message], [Object])
     end
   end
-
-  setup do
-    @subject = EasyJSONMatcher::ValidatorSet.new
-  end
-
-  test "ValidatorSet should hold other validators" do
-    test_val = ValidatorDouble.new
-    @subject.add_validator(key: :test, validator: test_val)
-    assert(subject.validators.values.include?(test_val), 'test_val should be found in subject')
-  end
-
-  test "ValidatorSet should call valid? on all its validators" do
-    mock_validators = { key1: mock_validator, key2: mock_validator }
-    mock_validators.each_pair do |key, mock|
-      @subject.add_validator(key: key, validator: mock)
-    end
-    call_validate(candidate: { key1: "test", key2: "test" })
-    mock_validators.values.each(&:verify)
-  end
-
-  test "ValidatorSet#valid? should return true if all its validators validate
-  their candidates" do
-    mock_validators = {key1: mock_validator, key2: mock_validator }
-    mock_validators.each_pair do |key, mock|
-      @subject.add_validator(key: key, validator: mock)
-    end
-    assert(call_validate(candidate: { key1: "test", key2: "test" }))
-  end
-
-  test "ValidatorSet#valid? should return false if any of its validators find
-  an invalid value" do
-    mock_validators = { key1: mock_validator(validity: true), key2: mock_validator(validity: false) }
-    mock_validators.each_pair do |key, mock|
-     @subject.add_validator(key: key, validator: mock)
-    end
-   assert_not(call_validate(candidate: { key1: "test", key2: "test" }), "ValidatorSet should have returned false") 
-  end
-
-  test "ValidatorSet should return error messages in a hash" do
-    @subject.add_validator(key: :invalid, validator: mock_with_errors)
-    assert(@subject.get_errors.is_a?(Hash))
-  end
-
-  test "ValidatorSet should return the error messages for all its validators" do
-    error_hash_a = mock_with_errors error_message:  "a" 
-    error_hash_b = mock_with_errors error_message:  "b" 
-    @subject.add_validator(key: :a, validator: error_hash_a)
-    @subject.add_validator(key: :b, validator: error_hash_b)
-    expected_error_message = { a: "a", b: "b" }
-    assert_equal(expected_error_message, @subject.get_errors) 
-  end
-
-  def mock_with_errors(error_message: "error message" )
-    validator = MiniTest::Mock.new
-    validator.expect(:get_errors, error_message)
-    validator
-  end
-
-  def call_validate(candidate: {})
-    subject.valid?(candidate)
-  end
-
-  def mock_validator(validity: true)
-    mock = MiniTest::Mock.new
-    mock.expect(:valid?, validity,[String])
-  end
-
 end
