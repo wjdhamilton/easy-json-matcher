@@ -18,7 +18,10 @@ module EasyJSONMatcher
     end
 
     it "should return false if any of its validators find an invalid value" do
-      mock_validators = { key1: mock_validator(validity: true), key2: mock_validator(validity: false) }
+      mock_validators = { 
+        key1: mock_validator(validity: true), 
+        key2: mock_validator(validity: false)
+      }
       subject = ValidatorSet.new validators: mock_validators
       subject.check(value: { key1: "test", key2: "test" }).wont_be :empty?
     end
