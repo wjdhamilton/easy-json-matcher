@@ -6,7 +6,7 @@ module EasyJSONMatcher
   class ValidationStepTest < ActiveSupport::TestCase
 
     setup do
-      @subject = ValidationStep.new(verify_with: ->(value, errors){})
+      @subject = ValidationStep.new(verify_with: ->(value, errors) {} )
     end
 
     test "it_should_respond_to_check" do
@@ -18,7 +18,7 @@ module EasyJSONMatcher
       tail = MiniTest::Mock.new
       test_value = "hello!"
       head >> tail
-      tail.expect(:check, nil,[Hash])
+      tail.expect(:check, nil, [Hash])
       tail.expect(:nil?, false)
       head.check(value: test_value)
       tail.verify
@@ -39,8 +39,8 @@ module EasyJSONMatcher
       test_value = "verify me"
       @subject >> middle >> tail
       @subject.check(value: test_value)
-      # There is no official way to check that something wasn't called in 
-      # MiniTest, so we'll just have to assume that since verify passes, then 
+      # There is no official way to check that something wasn't called in
+      # MiniTest, so we'll just have to assume that since verify passes, then
       # check wasn't called in tail
       tail.verify
     end
