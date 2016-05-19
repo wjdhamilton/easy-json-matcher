@@ -89,18 +89,18 @@ JSON payloads can contain arrays, which have to be handled differently from prim
 ```ruby
 EasyJSONMatcher::SchemaGenerator.new {|array_schema|
   array_schema.contains_array key: :array do |array|
-    array.should_only_contain_strings
+    array.elements_should be: [:number]
   end
 }
 ```
 
 Allowing clients to specify that there can be values of different types may be implemented in future releases.
 
-You can also reuse registered schemas in almost the same manner, using the `#should_only_contain_schema` as follows:
+You can also reuse registered schemas in the same manner. This assumes that the schema has been registered with `SchemaLibrary`
 
 ```ruby
 EasyJSONMatcher::SchemaGenerator.new {|array_schema|
-  array_schema.should_only_contain_schema name: :schema_name
+  array_schema.elements_should be: [:schema_name]
 }
 ```
 
@@ -109,14 +109,14 @@ EasyJSONMatcher::SchemaGenerator.new {|array_schema|
 JSON objects can contain nested objects. These can be defined in the schema in two different ways, either by defining them inline with `#contains_node` or using `#has_schema`.
 
 #####contains_node
-`#contains_node` yields an object that responds to the same messages as `SchemaGenerator`, so you can define the content of the expected object in the same way that you define the content of your top-level `SchemaGenerator` instance. For instance:
+`#contains_node` yields an object that responds to the same messages as that yielded by `SchemaGenerator#new`, so you can define the content of the expected object in the same way that you define the content of your top-level `SchemaGenerator` instance. For instance:
 
 ```ruby
 EasyJSONMatcher::SchemaGenerator.new {|node_schema|
   node_schema.contains_node key: :level_1 do |level_1|
     node.has_string key: :title
     node.contains_node key: :level_2 do |level_2|
-      node.has_string: :title
+      node.has_string: key: :sub_heading
     end
   end
 }
@@ -128,7 +128,7 @@ EasyJSONMatcher::SchemaGenerator.new {|node_schema|
   'level_1': {
     'title': 'level one',
     'level_2': {
-      'title': 'level two'
+      'sub_heading': 'level two'
     }
   }
 }"
@@ -159,11 +159,11 @@ will validate the following json object:
 
 ###Custom Validations
 
-Sometimes simply knowing that a value is the correct type and is present isn't enough. Sometimes you need more detail. To facilitate this, the `options` hash can accept a `custom_validator:` option which must refer to a lambda like so: 
+Sometimes simply knowing that a value is the correct type and is present isn't enough. Sometimes you need more detail. To facilitate this, the `options` array can contain a lambda like so: 
 
 ```ruby
   EasyJSONMatcher::SchemaGenerator.new {|schema|
-    schema.has_value key: val, opts: { custom_validator: ->(candidate){ "value should say hello world" unless value == "hello world" } }
+    schema.has_value key: val, opts: [ ->(candidate){ "value should say hello world" unless value == "hello world" ] }
   }
 ```
 
@@ -173,7 +173,7 @@ Obviously you can reuse the same lamda in different places. The lambda object mu
 All the messages that define the content of a schema can accept an options hash with the keyword `:opts`, for instance:
 
 ```ruby
-schema.has_string key: :string, opts: {required: true}
+schema.has_string key: :string, opts: [:required]
 ```
 
 This applies to methods prefixed with both `has_` and `contains_`.
@@ -181,13 +181,13 @@ This applies to methods prefixed with both `has_` and `contains_`.
 The options accepted by all validators are as follows:
 
 *`required:` indicates that the value must be present. Note that has_value will accept `null` as a value in this case, but the key must be present in the JSON object.*
-*`strict:` only applies to nodes. If this is set to `true` then the schema will only validate a node where its keyset is equal to or a subset of the expected keyset. If it has any keys in addition to the expected set then the schema will be invalid.*
+*`strict:` If this is set to `true` then the schema will only validate a node where its keyset is equal to or a subset of the expected keyset. If it has any keys in addition to the expected set then the schema will be invalid.*
 
 ####Global Options
 Options can also be added as defaults for the entire schema by passing a `Hash` to the `global_defaults:` argument for `EasyJSONMatcher::SchemaGenerator.new`, so for instance:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new(global_opts: {required: true})
+EasyJSONMatcher::SchemaGenerator.new(global_opts: [:required])
 ```
 
 would generate a validator that required all its keys to be present. Global settings can be overriden for a specific attribute by setting their values in the usual way. Note that these settings will not apply to schemas that have been recovered from `SchemaLibrary`.
@@ -204,7 +204,7 @@ schema.valid? json
 ```
 
 ##Error Messages
-In order to assist you to understand _why_ the candidate was considered invalid, a `Hash` detailing the reasons why any elements were invalid can be retrieved after `valid?` has been called by calling `get_errors`. Note that there is an attribute called `errors`. It is not intended to be used to retrieve the list of errors, all you'll get is the error list for the top level of the schema you sent the message to.
+In order to assist you to understand _why_ the candidate was considered invalid, an `Array` detailing the reasons why any elements were invalid can be retrieved by calling `#validate(candidate: your_sample)`.
 
 ##Reusing Schemas
 Any schema can be registered with the `SchemaLibrary` object, by sending the `#register` message to an instance of `SchemaGenerator`. Doing so explicitly registers the schema's `Validator` with `SchemaLibrary` and also returns the generated `Validator`. So you can do the following:
@@ -220,17 +220,6 @@ validity = retrieved.valid? json
 ```
 
 You can also add a schema directly using `EasyJSONMatcher::SchemaLibrary#add_schema` if you wish.
-
-##Reusing Validator Objects
-Once a validator has run, and has found issues, then those issues will be recorded in the object return by `#errors`. However, if the `#valid?` is called again, then any errors found during that validation will be added to those found during the first validation. To avoid this, and reuse the validator, you can reset it as follows:
-
-```ruby
-schema.valid? json
-errors = schema.get_errors
-schema.reset!
-schema.valid? other_json
-new_errors = schema.get_errors
-```
 
 ##Issues
 If you find any aspect of the gem which does not behave as expected, please raise an issue. If the issue relates specifically to a JSON payload validating incorrectly for a given schema, please supply both the code you used to create the schema and the object that did not validate in your bug report. That will make it much easier to track down the issue!
