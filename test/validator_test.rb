@@ -18,7 +18,7 @@ describe Validator do
     end
 
     it "should return false if any errors are generated" do
-      @v_step.expect(:call, { a: 1, b: 2,c: 3 }, [Hash])
+      @v_step.expect(:call, { a: 1, b: 2, c: 3 }, [Hash])
       @subject.valid?(candidate: Hash.new.to_json).must_be :==, false
     end
 

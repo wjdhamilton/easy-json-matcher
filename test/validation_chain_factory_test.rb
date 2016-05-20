@@ -33,7 +33,7 @@ module EasyJSONMatcher
 
       it "should move :required validation to the start of the chain" do
         chain = ValidationChainFactory.get_chain(steps: [:string, :required])
-        chain.call(value: nil)[0].must_match /no value found/
+        chain.call(value: nil)[0].must_match /(no value found)/
       end
 
       it "should put :not_required at the start if :required is not specified" do

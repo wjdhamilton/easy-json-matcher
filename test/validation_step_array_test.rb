@@ -20,7 +20,7 @@ module EasyJSONMatcher
       end
 
       it "should call all the content is of a particular type" do
-        @subject.call(value: [1,2,3]).wont_be :empty?
+        @subject.call(value: [1, 2, 3]).wont_be :empty?
       end
     end
   end

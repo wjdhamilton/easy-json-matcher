@@ -19,16 +19,17 @@ module EasyJSONMatcher
         SCHEMAS[name] = schema
       end
 
-      #TODO error message should read "called #{name}, not with #{name}"
+      # TODO: error message should read "called #{name}, not with #{name}"
       def get_schema(name:, opts: {})
         if schema = SCHEMAS[name]
           schema
         else
-          ->(value:){ SCHEMAS[name].call(value: value) }
+          ->(value:) { SCHEMAS[name]&.call(value: value) or raise MissingSchemaException.new }
         end
       end
 
-      #TODO this method should use get_schema to ensure schema presence is checked
+      # TODO: this method should use get_schema to ensure schema presence is
+      # checked
       def use_schema(name:, wrap_with: Validator)
         wrap_with.new validate_with: SCHEMAS[name]
       end
