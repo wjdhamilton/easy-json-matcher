@@ -1,13 +1,11 @@
 require "easy_json_matcher/validation_chain_factory"
 require "easy_json_matcher/node"
-require "easy_json_matcher/schema_library"
 require "easy_json_matcher/validator"
 require "easy_json_matcher/attribute_type_methods"
 require "easy_json_matcher/node_generator"
 
 module EasyJSONMatcher
   class SchemaGenerator
-    include AttributeTypeMethods
 
     attr_reader :node, :glob_opts, :att_glob_opts
 

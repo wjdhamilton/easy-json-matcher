@@ -19,11 +19,13 @@ module EasyJSONMatcher
        SCHEMAS[name] = schema
       end
 
+      #TODO error message should read "called #{name}, not with #{name}"
       def get_schema(name:, opts: {})
         schema = _find_and_clone_schema(name) or raise MissingSchemaException.new("No schema with #{name} has been registered")
         schema
       end
 
+      #TODO this method should use get_schema to ensure schema presence is checked
       def use_schema(name:, wrap_with: Validator)
         wrap_with.new validate_with: SCHEMAS[name]
       end
