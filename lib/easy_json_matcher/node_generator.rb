@@ -22,7 +22,7 @@ module EasyJSONMatcher
       Node.new(opts: node_opts, strict: strict, validators: validators)
     end
 
-    def has_attribute(key:, opts:)
+    def has_attribute(key:, opts: [])
       validator = AttributeGenerator.new(local_opts: opts, global_opts: global_opts)
       validators[key] = validator.generate_attribute
     end
