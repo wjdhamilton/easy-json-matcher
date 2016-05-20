@@ -31,7 +31,7 @@ module EasyJSONMatcher
       # TODO: this method should use get_schema to ensure schema presence is
       # checked
       def use_schema(name:, wrap_with: Validator)
-        wrap_with.new validate_with: SCHEMAS[name]
+        wrap_with.new validate_with: get_schema(name: name)
       end
     end
   end
