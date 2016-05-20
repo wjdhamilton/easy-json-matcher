@@ -21,7 +21,7 @@ module EasyJSONMatcher
 
     def validate(candidate:)
       candidate = coercer.coerce(json: candidate)
-      validation_chain.check(value: candidate)
+      validation_chain.call(value: candidate)
     end
   end
 end

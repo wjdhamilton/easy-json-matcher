@@ -7,8 +7,8 @@ module EasyJSONMatcher
 
     describe "#add_validator" do
 
-      it "should respond to #check" do
-        Node.new(validators: nil).must_respond_to :check
+      it "should respond to #call" do
+        Node.new(validators: nil).must_respond_to :call
       end
 
       it "should send call to its own validator" do
@@ -21,7 +21,7 @@ module EasyJSONMatcher
                      b: ["2 is not a String"],
                      c: ["3 is not a String"]
         }]
-        node.check(value: test_value).must_be :==, expected
+        node.call(value: test_value).must_be :==, expected
       end
     end
   end

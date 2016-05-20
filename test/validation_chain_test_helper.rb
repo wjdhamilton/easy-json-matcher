@@ -8,6 +8,6 @@ module ValidationChainTestHelper
 
   def assert_chain_verifies(type:, test_value:, outcome:)
     v_step = get_instance(type: type)
-    expect(v_step.check(value: test_value).empty?).must_be :==, outcome
+    expect(v_step.call(value: test_value).empty?).must_be :==, outcome
   end
 end

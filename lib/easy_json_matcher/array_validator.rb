@@ -12,8 +12,8 @@ module EasyJSONMatcher
       @verifier.concat(container.new(verify_with: chain))
     end
 
-    def check(value:, errors: [])
-      verifier.check(value: value)
+    def call(value:)
+      verifier.call(value: value)
     end
   end
 end
