@@ -19,7 +19,6 @@ module EasyJSONMatcher
         SCHEMAS[name] = schema
       end
 
-      # TODO: error message should read "called #{name}, not with #{name}"
       def get_schema(name:, opts: {})
         if schema = SCHEMAS[name]
           schema
@@ -28,8 +27,6 @@ module EasyJSONMatcher
         end
       end
 
-      # TODO: this method should use get_schema to ensure schema presence is
-      # checked
       def use_schema(name:, wrap_with: Validator)
         wrap_with.new validate_with: get_schema(name: name)
       end
