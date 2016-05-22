@@ -29,20 +29,18 @@ module EasyJSONMatcher
           using.new verify_with: validating
         elsif verifier = standard_validator(with: validating)
           using.new verify_with: verifier
+        elsif schema = SchemaLibrary.get_schema(name: validating)
+          schema
         else
-          begin
-           return SchemaLibrary.get_schema(name: validating)
-          rescue MissingSchemaException => ex
-            #TODO this needs a little finesse: How will the user know if it was a missing schema?
-            raise UnknownValidationStepError.new(type: validating)
-          end
+          #TODO this needs a little finesse: How will the user know if it was a missing schema?
+          raise UnknownValidationStepError.new(type: validating)
         end
       end
+    end
 
-      def standard_validator(with:)
-        require "easy_json_matcher/validation_rules"
-        VALIDATION_RULES[with]
-      end
+    def self.standard_validator(with:)
+      require "easy_json_matcher/validation_rules"
+      VALIDATION_RULES[with]
     end
   end
 end
