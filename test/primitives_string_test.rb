@@ -6,11 +6,11 @@ require 'json'
 
 module EasyJSONMatcher
 
-  describe "String Primitives" do
+  describe "Basic Type Validations" do
 
     before do
       @test_schema = SchemaGenerator.new { |g|
-        g.has_string key: "string"
+        g.has_string key: :string
       }.generate_schema
     end
 
