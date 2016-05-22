@@ -6,7 +6,7 @@ module EasyJSONMatcher
 
     subject { 
       SchemaGenerator.new { |sc|
-        sc.has_attribute key: "val", 
+        sc.has_attribute key: :val, 
           opts: [
             :required,
             ->(value, errors) { errors << "value was false" unless value === true }

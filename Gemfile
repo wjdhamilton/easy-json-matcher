@@ -5,7 +5,6 @@ source 'https://rubygems.org'
 # development dependencies will be added by default to the :development group.
 gemspec
 
-gem 'dry-auto_inject', git: 'https://github.com/dry-rb/dry-auto_inject.git'
 # To use a debugger
 group :development, :test do
   gem 'activesupport'

@@ -11,7 +11,7 @@ module EasyJSONMatcher
 
     before do
       @test_schema = SchemaGenerator.new { |g|
-        g.has_date key: "date"
+        g.has_date key: :date
       }.generate_schema
     end
 
