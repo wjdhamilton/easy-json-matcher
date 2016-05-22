@@ -5,9 +5,9 @@ module EasyJSONMatcher
   describe "Strict Mode" do
 
     subject {
-      SchemaGenerator.new(global_opts: [ :strict ]) { |s|
-        s.has_attribute key: :a, opts: []
-        s.has_attribute key: :b, opts: []
+      SchemaGenerator.new(global_opts: [:strict]) { |s|
+        s.has_attribute key: "a", opts: []
+        s.has_attribute key: "b", opts: []
       }.generate_schema
     }
 
