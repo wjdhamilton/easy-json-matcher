@@ -15,7 +15,7 @@ module EasyJSONMatcher
       mock_validators = { key_1: mock_validator, "key_2" => mock_validator }
       subject = ValidatorSet.new validators: mock_validators
       test_val = { "key_1" => 1, key_2: 2 }
-      subject.check(value: test_val)
+      subject.call(value: test_val)
       mock_validators.each_value(&:verify)
     end
 
