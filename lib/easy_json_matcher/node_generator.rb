@@ -2,12 +2,13 @@ require "easy_json_matcher/attribute_type_methods"
 
 module EasyJSONMatcher
   class NodeGenerator
-    include AutoInject["node", "attribute_generator", "array_generator", "schema_library"]
+    include AutoInject.kwargs[:node, :attribute_generator, :array_generator, :schema_library]
     include AttributeTypeMethods
 
     attr_reader :validators, :attribute_opts, :node_opts, :array_opts, :global_opts
 
-    def initialize(opts: [], global_opts: [])
+    def initialize(opts: [], global_opts: [], **args)
+      super
       @validators = {} 
       @node_opts = extract_opts(local: opts, global: global_opts)
       @global_opts = global_opts
