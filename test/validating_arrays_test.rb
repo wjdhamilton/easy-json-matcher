@@ -7,14 +7,14 @@ module EasyJSONMatcher
 
     before do
       SchemaGenerator.new {|s|
-        s.has_attribute key: "name", opts: [:string, :required]
-        s.has_attribute key: "spouse", opts: [:string, :required]
+        s.has_attribute key: :name, opts: [:string, :required]
+        s.has_attribute key: :spouse, opts: [:string, :required]
       }.register as: :greek_hero
     end 
 
     subject{
       test_schema = SchemaGenerator.new {|s|
-        s.contains_array(key: "data") do |a|
+        s.contains_array(key: :data) do |a|
           a.elements_should be: [:greek_hero]
         end
       }.generate_schema
@@ -22,7 +22,7 @@ module EasyJSONMatcher
 
     it "should validate each value in the array" do
       validator = SchemaGenerator.new { |s|
-        s.contains_array(key: "array") do |a|
+        s.contains_array(key: :array) do |a|
           a.elements_should be: [:number]
         end
       }.generate_schema

@@ -7,10 +7,10 @@ module EasyJSONMatcher
 
     subject {  
       SchemaGenerator.new(global_opts: [ :required ]) { |schema|
-        schema.has_boolean key: "implicitly_required"
-        schema.contains_node key: "also_implicitly_required" do |n|
-          n.has_boolean key: "nested_implicitly_required"
-          n.has_boolean key: "not_required", opts: [:not_required]
+        schema.has_boolean key: :implicitly_required
+        schema.contains_node key: :also_implicitly_required do |n|
+          n.has_boolean key: :nested_implicitly_required
+          n.has_boolean key: :not_required, opts: [:not_required]
         end
       }.generate_schema
     }
