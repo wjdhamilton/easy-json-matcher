@@ -11,6 +11,14 @@ module EasyJSONMatcher
       subject.validators.values.include?(test_val).must_be :==, true
     end
 
+    it "should validate with keys and symbols" do
+      mock_validators = { key_1: mock_validator, "key_2" => mock_validator }
+      subject = ValidatorSet.new validators: mock_validators
+      test_val = { "key_1" => 1, key_2: 2 }
+      subject.check(value: test_val)
+      mock_validators.each_value(&:verify)
+    end
+
     it "should return true if all its validators validate their candidates" do
       mock_validators = { key1: mock_validator, key2: mock_validator }
       subject = ValidatorSet.new validators: mock_validators
