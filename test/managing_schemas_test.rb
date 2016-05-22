@@ -15,6 +15,24 @@ module EasyJSONMatcher
       assert(SchemaLibrary.available_schemas.include?(:test), ":test not found in available_nodes")
     end
 
+    test "The order in which schemas are defined should not matter" do
+      test_schema = SchemaGenerator.new { |sc|
+        sc.has_schema key: "lazy", name: :lazily_evaluated
+      }.register as: :outer
+
+      lazy = SchemaGenerator.new { |sc|
+        sc.has_attribute key: :val
+      }.register as: :lazily_evaluated
+
+      valid_json = {
+        lazy: {
+          val: 1
+        }
+      }.to_json
+
+      assert test_schema.valid?(candidate: valid_json)
+    end
+
     test "As as user I want to reuse a saved schema"  do
       candidate = {
         name: "Green Mandarin"
