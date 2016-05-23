@@ -42,19 +42,19 @@ module EasyJSONMatcher
     end
 
     test "SchemaLibrary should thrown a MissingSchemaException if an unregistered schema is requested" do
-        schema = SchemaLibrary.get_schema(name: "#{@name.to_s}-wibble")
+      schema = SchemaLibrary.get_schema(name: "#{@name.to_s}-wibble")
       assert_raises(MissingSchemaException) do
         schema.call(value: {}.to_json)
       end
     end
 
     test "SchemaLibrary should tell the user which schema is missing" do
-        schema = SchemaLibrary.get_schema(name: :womble)
-        begin
-          schema.call(value: {}.to_json)
-        rescue MissingSchemaException => ex
-          assert ex.message =~ /womble/
-        end
+      schema = SchemaLibrary.get_schema(name: :womble)
+      begin
+        schema.call(value: {}.to_json)
+      rescue MissingSchemaException => ex
+        assert ex.message =~ /womble/
+      end
     end
 
     test "As a user I want to reuse a schema within another schema" do
