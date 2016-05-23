@@ -24,15 +24,17 @@ module EasyJSONMatcher
         if schema = SCHEMAS[name]
           schema
         else
-          ->(value:) { SCHEMAS[name]&.call(value: value) or raise MissingSchemaException.new }
+          lambda do |value|
+            SCHEMAS[name]&.call(value: value) or raise MissingSchemaException.new(schema_name: name)
+          end
         end
       end
 
-      # TODO: this method should use get_schema to ensure schema presence is
-      # checked
-      def use_schema(name:, wrap_with: Validator)
-        wrap_with.new validate_with: get_schema(name: name)
+        # TODO: this method should use get_schema to ensure schema presence is
+        # checked
+        def use_schema(name:, wrap_with: Validator)
+          wrap_with.new validate_with: get_schema(name: name)
+        end
       end
     end
   end
-end
