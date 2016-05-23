@@ -32,6 +32,7 @@ module EasyJSONMatcher
         elsif schema = SchemaLibrary.get_schema(name: validating)
           schema
         else
+          #TODO this needs a little finesse: How will the user know if it was a missing schema?
           raise UnknownValidationStepError.new(type: validating)
         end
       end

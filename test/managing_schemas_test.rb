@@ -48,15 +48,6 @@ module EasyJSONMatcher
       end
     end
 
-    test "SchemaLibrary should tell the user which schema is missing" do
-        schema = SchemaLibrary.get_schema(name: :womble)
-        begin
-          schema.call(value: {}.to_json)
-        rescue MissingSchemaException => ex
-          assert ex.message =~ /womble/
-        end
-    end
-
     test "As a user I want to reuse a schema within another schema" do
       test_schema = SchemaGenerator.new { |s|
         s.has_boolean key: "is_present", opts: [ :required ]
