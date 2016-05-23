@@ -24,7 +24,9 @@ module EasyJSONMatcher
         if schema = SCHEMAS[name]
           schema
         else
-          ->(value:) { SCHEMAS[name]&.call(value: value) or raise MissingSchemaException.new }
+          lambda do |value|
+            SCHEMAS[name]&.call(value: value) or raise MissingSchemaException.new(schema_name: name)
+          end
         end
       end
 

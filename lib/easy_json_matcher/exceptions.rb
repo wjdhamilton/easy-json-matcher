@@ -4,5 +4,10 @@ module EasyJSONMatcher
 
   # Exception thrown by SchemaLibrary when a Schema is requested that has not
   # already been registered
-  class MissingSchemaException < Error; end
+  class MissingSchemaException < Error
+
+    def initialize(schema_name:)
+      super("missing schema: #{schema_name}")
+    end
+  end
 end
