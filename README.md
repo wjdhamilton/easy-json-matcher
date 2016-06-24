@@ -160,6 +160,19 @@ will validate the following json object:
 }"
 ```
 
+###Plural Requirements
+All of the above methods have a corresponding plural method that allows you to reduce boilerplate. For instance the following code snippets are equivalent:
+
+```ruby
+schema.has_string key: :a, [:required]
+schema.has_string key: :b, [:required]
+```
+
+```ruby
+schema.has_strings keys: [:a, :b], [:required]
+```
+
+
 ###Custom Validations
 
 Sometimes simply knowing that a value is the correct type and is present isn't enough. Sometimes you need more detail. To facilitate this, the `options` array can contain a lambda like so: 
