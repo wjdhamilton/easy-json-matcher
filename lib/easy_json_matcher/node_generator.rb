@@ -7,11 +7,13 @@ require "easy_json_matcher/array_generator"
 
 module EasyJSONMatcher
   class NodeGenerator
+    include AutoInject.kwargs[:node, :attribute_generator, :array_generator, :schema_library]
     include AttributeTypeMethods
 
     attr_reader :validators, :attribute_opts, :node_opts, :array_opts, :global_opts
 
-    def initialize(opts: [], global_opts: [])
+    def initialize(opts: [], global_opts: [], **args)
+      super(**args)
       @validators = {} 
       @node_opts = extract_opts(local: opts, global: global_opts)
       @global_opts = global_opts
@@ -19,11 +21,11 @@ module EasyJSONMatcher
 
     def generate_node
       strict = node_opts.delete(:strict)
-      Node.new(opts: node_opts, strict: strict, validators: validators)
+      node.new(opts: node_opts, strict: strict, validators: validators)
     end
 
     def has_attribute(key:, opts: [])
-      validator = AttributeGenerator.new(local_opts: opts, global_opts: global_opts)
+      validator = attribute_generator.new(local_opts: opts, global_opts: global_opts)
       validators[key] = validator.generate_attribute
     end
 
@@ -34,19 +36,19 @@ module EasyJSONMatcher
     end
 
     def contains_array(key:, opts: [])
-      validator = ArrayGenerator.new(local_opts: opts, global_opts: global_opts)
+      validator = array_generator.new(local_opts: opts, global_opts: global_opts)
       yield validator if block_given?
       validators[key] = validator.generate_array
     end
 
     def has_schema(key:, name:)
-      schema = SchemaLibrary.get_schema(name: name)
+      schema = schema_library.get_schema(name: name)
       validators[key] = schema
     end
 
     def extract_opts(local:, global:)
       conflicts = { required: :not_required }
-      opts = global.map do |opt| 
+      global.map do |opt| 
         if conflicts.keys.include? opt
           local.include?(conflicts[opt]) ? conflicts[opt] : opt
         else
