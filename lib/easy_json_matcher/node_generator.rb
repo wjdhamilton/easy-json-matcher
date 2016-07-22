@@ -1,9 +1,4 @@
-require "easy_json_matcher/validation_chain_factory"
-require "easy_json_matcher/node"
-require "easy_json_matcher/schema_library"
 require "easy_json_matcher/attribute_type_methods"
-require "easy_json_matcher/attribute_generator"
-require "easy_json_matcher/array_generator"
 
 module EasyJSONMatcher
   class NodeGenerator

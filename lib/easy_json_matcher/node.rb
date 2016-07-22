@@ -1,5 +1,3 @@
-require "easy_json_matcher/validation_step"
-
 module EasyJSONMatcher
   class Node 
     include AutoInject.kwargs[:node_content_validator, :chain_factory]

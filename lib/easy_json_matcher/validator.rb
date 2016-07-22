@@ -1,5 +1,3 @@
-require 'easy_json_matcher/json_coercer'
-
 module EasyJSONMatcher
   class Validator
     include AutoInject.kwargs[:coercer]
