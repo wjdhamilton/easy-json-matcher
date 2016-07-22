@@ -2,19 +2,20 @@ require "easy_json_matcher/array_validator"
 
 module EasyJSONMatcher
   class ArrayGenerator
+    include AutoInject.kwargs[:array_validator]
 
     WHITELIST = [:required, :not_required]
 
-    attr_reader :opts, :content_opts, :target_class
+    attr_reader :opts, :content_opts, :array_validator
 
-    def initialize(local_opts:, global_opts:, target_class: ArrayValidator)
-      @target_class = target_class
+    def initialize(local_opts:, global_opts:, **args)
+      super(**args)
       @opts = extract_opts(locals: local_opts, globals: global_opts)
       @content_opts = []
     end
 
     def generate_array
-      target_class.new(opts: opts, verify_content_as: content_opts)
+      array_validator.new(opts: opts, verify_content_as: content_opts)
     end
 
     def elements_should(be:)

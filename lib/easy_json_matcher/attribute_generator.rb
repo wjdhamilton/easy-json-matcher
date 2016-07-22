@@ -1,15 +1,16 @@
 module EasyJSONMatcher
   class AttributeGenerator
+    include AutoInject.kwargs[:chain_factory]
 
     attr_reader :opts, :factory
 
-    def initialize(attribute_factory: ValidationChainFactory, local_opts:, global_opts:)
-      @factory = attribute_factory
+    def initialize(local_opts:, global_opts:, **args)
+      super(**args)
       @opts = extract_opts(locals: local_opts, globals: global_opts)
     end
 
     def generate_attribute
-      factory.get_chain(steps: opts)
+      chain_factory.get_chain(steps: opts)
     end
 
     def extract_opts(locals:, globals:)

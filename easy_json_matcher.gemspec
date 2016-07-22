@@ -14,6 +14,10 @@ Gem::Specification.new do |s|
   s.description = "Test your JSON output in Ruby, with a DSL that makes reasoning about your JSON very straightforward. See the Homepage for docs."
   s.license     = "MIT"
 
+  # Runtime dependencies
+  # s.add_runtime_dependency 'dry-auto_inject', '~> 0.3'
+  # s.add_runtime_dependency 'dry-container', '~>0.3'
+
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]
 end

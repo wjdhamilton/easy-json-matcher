@@ -2,13 +2,14 @@ require 'easy_json_matcher/json_coercer'
 
 module EasyJSONMatcher
   class Validator
+    include AutoInject.kwargs[:coercer]
 
     attr_reader :validation_chain, :coercer
     attr_accessor :key
 
-    def initialize(validate_with:, coerce_with: JsonCoercer.new)
+    def initialize(validate_with:, **args)
+      super(**args)
       @validation_chain = validate_with
-      @coercer = coerce_with
     end
 
     # Hook. Allows further setup to be carried out by subclasses
