@@ -1,14 +1,9 @@
-GIT
-  remote: https://github.com/dry-rb/dry-auto_inject.git
-  revision: 133eb9248c73e50e9e2d694f770544b7f8deb259
-  specs:
-    dry-auto_inject (0.3.0)
-      dry-container (~> 0.3.4)
-
 PATH
   remote: .
   specs:
     easy_json_matcher (0.3.1)
+      dry-auto_inject (~> 0.3)
+      dry-container (~> 0.3)
 
 GEM
   remote: https://rubygems.org/
@@ -22,6 +17,8 @@ GEM
     byebug (8.2.2)
     concurrent-ruby (1.0.2)
     debug_inspector (0.0.2)
+    dry-auto_inject (0.3.0)
+      dry-container (~> 0.3.4)
     dry-configurable (0.1.6)
       concurrent-ruby (~> 1.0)
     dry-container (0.3.4)
@@ -48,8 +45,6 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   byebug
-  dry-auto_inject!
-  dry-container
   easy_json_matcher!
   mocha
   pretty_backtrace

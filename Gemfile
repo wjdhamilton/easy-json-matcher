@@ -7,8 +7,8 @@ gemspec
 
 # To use a debugger
 group :development, :test do
-  gem 'dry-auto_inject', git: "https://github.com/dry-rb/dry-auto_inject.git"
-  gem 'dry-container'
+  # gem 'dry-auto_inject', git: "https://github.com/dry-rb/dry-auto_inject.git"
+  # gem 'dry-container'
   gem 'activesupport'
   gem 'pretty_backtrace'
   gem 'byebug'
