@@ -1,5 +1,6 @@
 module AttributeTypeMethods
 
+
     def has_boolean(key:, opts: [])
       has_attribute(key: key, opts: opts + [:boolean])
     end
@@ -48,8 +49,14 @@ module AttributeTypeMethods
       mass_assign(keys: keys, opts: opts, meth: :has_date)
     end
 
-
     def mass_assign(keys:, opts: [], meth:)
       keys.each { |k| self.send(meth, { key: k, opts: opts }) }
     end
+
+    alias_method :boolean, :has_boolean
+    alias_method :number, :has_number
+    alias_method :date, :has_date
+    alias_method :object, :has_object
+    alias_method :value, :has_value
+    alias_method :string, :has_string
 end
