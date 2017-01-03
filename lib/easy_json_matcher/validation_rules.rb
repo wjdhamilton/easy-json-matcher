@@ -33,7 +33,7 @@ module EasyJSONMatcher
   },
     boolean: ->(value, errors){
     clazz = value.class
-    unless (clazz == TrueClass) || (clazz == FalseClass)
+    unless [ TrueClass, FalseClass].include? clazz
       errors << "#{value} is not a Boolean"
       false
     end
