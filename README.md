@@ -1,6 +1,6 @@
 # EasyJSONMatcher
 
-This gem is designed to make it easy for you to validate JSON objects in Ruby. It's a lightweight gem primarily designed to be used in testing. If you want something more comprehensive for a production environment I suggest you look at (dry-validation)[https://github.com/dry-rb/dry-validation].
+This gem is designed to make it easy for you to validate JSON objects in Ruby. It's a lightweight gem primarily designed to be used in testing. If you want something more comprehensive for a production environment I suggest you look at [dry-validation](https://github.com/dry-rb/dry-validation).
 
 The interface uses a plain Ruby DSL to make representing expected JSON output in your test suites very straightforward. No need to work in any other language or even create additional files to store your schemas if you don't want to.  
 
