@@ -9,8 +9,8 @@ module EasyJSONMatcher
   describe "Boolean Primitive Test" do
 
     before do
-      @test_schema = SchemaGenerator.new { |g|
-        g.has_boolean key: "boolean"
+      @test_schema = SchemaGenerator.new {
+        has_boolean key: "boolean"
       }.generate_schema
     end
 

@@ -9,8 +9,8 @@ module EasyJSONMatcher
   describe "Value primitive test" do
 
     before do
-      @test_schema = SchemaGenerator.new { |g|
-        g.has_boolean key: :value
+      @test_schema = SchemaGenerator.new {
+        has_boolean key: :value
       }.generate_schema
     end
 

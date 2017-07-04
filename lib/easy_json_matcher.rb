@@ -7,4 +7,5 @@ module EasyJSONMatcher
 
   TYPES = [:number, :object, :value, :string, :boolean, :date, :array]
 
+  IMPORT = Dry::AutoInject(Container)
 end

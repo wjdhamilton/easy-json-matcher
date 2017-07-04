@@ -9,8 +9,8 @@ module EasyJSONMatcher
   describe "Number Validations" do
 
     before do
-      @test_schema = SchemaGenerator.new { |g|
-        g.has_number key: "number"
+      @test_schema = SchemaGenerator.new {
+        has_number key: "number"
       }.generate_schema
     end
 

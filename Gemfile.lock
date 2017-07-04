@@ -2,41 +2,38 @@ PATH
   remote: .
   specs:
     easy_json_matcher (0.3.4)
-      dry-auto_inject (~> 0.3)
-      dry-container (~> 0.3)
+      dry-auto_inject (~> 0.3.0)
+      dry-container (~> 0.3.0)
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activesupport (4.2.5.2)
+    activesupport (5.1.2)
+      concurrent-ruby (~> 1.0, >= 1.0.2)
       i18n (~> 0.7)
-      json (~> 1.7, >= 1.7.7)
       minitest (~> 5.1)
-      thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
-    byebug (8.2.2)
-    concurrent-ruby (1.0.2)
-    debug_inspector (0.0.2)
+    byebug (9.0.6)
+    concurrent-ruby (1.0.5)
+    debug_inspector (0.0.3)
     dry-auto_inject (0.3.0)
       dry-container (~> 0.3.4)
-    dry-configurable (0.1.6)
+    dry-configurable (0.7.0)
       concurrent-ruby (~> 1.0)
     dry-container (0.3.4)
       concurrent-ruby (~> 1.0)
       dry-configurable (~> 0.1, >= 0.1.3)
-    i18n (0.7.0)
-    json (1.8.3)
+    i18n (0.8.4)
     metaclass (0.0.4)
-    minitest (5.8.4)
-    mocha (1.1.0)
+    minitest (5.10.2)
+    mocha (1.2.1)
       metaclass (~> 0.0.1)
     pretty_backtrace (0.1.3)
       debug_inspector (~> 0.0.1)
-    rake (11.1.1)
-    rdoc (4.2.2)
-      json (~> 1.4)
-    thread_safe (0.3.5)
-    tzinfo (1.2.2)
+    rake (12.0.0)
+    rdoc (5.1.0)
+    thread_safe (0.3.6)
+    tzinfo (1.2.3)
       thread_safe (~> 0.1)
 
 PLATFORMS
@@ -52,4 +49,4 @@ DEPENDENCIES
   rdoc
 
 BUNDLED WITH
-   1.11.2
+   1.14.3

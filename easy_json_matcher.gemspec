@@ -15,8 +15,8 @@ Gem::Specification.new do |s|
   s.license     = "MIT"
 
   # Runtime dependencies
-  s.add_runtime_dependency 'dry-auto_inject', '~> 0.3'
-  s.add_runtime_dependency 'dry-container', '~>0.3'
+  s.add_runtime_dependency 'dry-auto_inject', '~> 0.3.0'
+  s.add_runtime_dependency 'dry-container', '~> 0.3.0'
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
   s.test_files = Dir["test/**/*"]

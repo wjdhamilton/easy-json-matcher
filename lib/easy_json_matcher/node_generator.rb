@@ -24,15 +24,14 @@ module EasyJSONMatcher
       validators[key] = validator.generate_attribute
     end
 
-    def contains_node(key:, opts: [])
-      generator = self.class.new(opts: opts, global_opts: global_opts)
-      yield generator if block_given?
+    def contains_node(key:, opts: [], &block)
+      generator = self.class.new(opts: opts, global_opts: global_opts, &block)
       validators[key] = generator.generate_node
     end
 
-    def contains_array(key:, opts: [])
+    def contains_array(key:, opts: [], &block)
       validator = array_generator.new(local_opts: opts, global_opts: global_opts)
-      yield validator if block_given?
+      validator.instance_eval &block if block_given?
       validators[key] = validator.generate_array
     end
 

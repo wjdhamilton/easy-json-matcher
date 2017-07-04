@@ -9,8 +9,8 @@ module EasyJSONMatcher
   describe "Primitive String Validation" do
 
     before do
-      @test_schema = SchemaGenerator.new { |g|
-        g.has_string key: "string"
+      @test_schema = SchemaGenerator.new {
+        has_string key: "string"
       }.generate_schema
     end
 
