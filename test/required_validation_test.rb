@@ -3,9 +3,9 @@ require 'test_helper'
 class RequireValidationTest < ActiveSupport::TestCase
 
   test "As a user I want to insist that a value is present" do
-    astronaut_schema = EasyJSONMatcher::SchemaGenerator.new { |s|
-      s.has_attribute key: "has_oxygen", opts: [:boolean, :required]
-      s.has_attribute key: "name", opts: [:string]
+    astronaut_schema = EasyJSONMatcher::SchemaGenerator.new {
+      has_attribute key: "has_oxygen", opts: [:boolean, :required]
+      has_attribute key: "name", opts: [:string]
     }.generate_schema
 
     valid_astronaut = {
@@ -23,9 +23,9 @@ class RequireValidationTest < ActiveSupport::TestCase
   end
 
   test "As a user I want validations to pass if the value is not present and I have not required it to be there" do
-    astronaut_schema = EasyJSONMatcher::SchemaGenerator.new { |s|
-      s.has_attribute key: "has_oxygen", opts: [:boolean]
-      s.has_attribute key: "name", opts: [:string]
+    astronaut_schema = EasyJSONMatcher::SchemaGenerator.new {
+      has_attribute key: "has_oxygen", opts: [:boolean]
+      has_attribute key: "name", opts: [:string]
     }.generate_schema
 
     valid_astronaut = {

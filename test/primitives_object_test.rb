@@ -9,8 +9,8 @@ module EasyJSONMatcher
   describe "Object primitive test" do
 
     before do
-      @test_schema = SchemaGenerator.new { |g|
-        g.has_object key: "object"
+      @test_schema = SchemaGenerator.new {
+        has_object key: "object"
       }.generate_schema
     end
 

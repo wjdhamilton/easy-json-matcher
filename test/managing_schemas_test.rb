@@ -6,9 +6,10 @@ module EasyJSONMatcher
 
     setup do
       @name = :test
-      SchemaGenerator.new { |schema|
-        schema.has_attribute(key: "name", opts: [ :string, :required ])
-      }.register(as: @name)
+      sc = SchemaGenerator.new { 
+        has_attribute(key: "name", opts: [ :string, :required ])
+      }
+      sc.register(as: @name)
     end
 
     test "As a user I want to be able to register a Schema so I can reuse it later" do
@@ -16,12 +17,12 @@ module EasyJSONMatcher
     end
 
     test "The order in which schemas are defined should not matter" do
-      test_schema = SchemaGenerator.new { |sc|
-        sc.has_schema key: "lazy", name: :lazily_evaluated
+      test_schema = SchemaGenerator.new { 
+        has_schema key: "lazy", name: :lazily_evaluated
       }.register as: :outer
 
-      lazy = SchemaGenerator.new { |sc|
-        sc.has_attribute key: "val"
+      SchemaGenerator.new {
+        has_attribute key: "val"
       }.register as: :lazily_evaluated
 
       valid_json = {
@@ -58,9 +59,9 @@ module EasyJSONMatcher
     end
 
     test "As a user I want to reuse a schema within another schema" do
-      test_schema = SchemaGenerator.new { |s|
-        s.has_boolean key: "is_present", opts: [ :required ]
-        s.has_schema key: @name, name: @name
+      test_schema = SchemaGenerator.new {
+        has_boolean key: "is_present", opts: [ :required ]
+        has_schema key: :test, name: :test
       }.generate_schema
 
       invalid_json = {
@@ -76,17 +77,17 @@ module EasyJSONMatcher
     end
 
     test "It can validate JSON Schema payloads" do
-      SchemaGenerator.new { |country|
-        country.has_attribute key: "id", opts: [:number, :required]
-        country.contains_node(key: "attributes") do |atts|
-          atts.has_attribute key: "alpha_2",  opts: [ :string, :required ]
-          atts.has_attribute key: "alpha_3",  opts: [ :string, :required ]
-          atts.has_attribute key: "name",     opts: [ :string, :required ]
+      SchemaGenerator.new { 
+        has_attribute key: "id", opts: [:number, :required]
+        contains_node(key: "attributes") do 
+          has_attribute key: "alpha_2",  opts: [ :string, :required ]
+          has_attribute key: "alpha_3",  opts: [ :string, :required ]
+          has_attribute key: "name",     opts: [ :string, :required ]
         end
       }.register(as: :country)
 
-      country_payload = SchemaGenerator.new {|country_payload|
-        country_payload.has_schema(key: "data", name: :country)
+      country_payload = SchemaGenerator.new {
+        has_schema(key: "data", name: :country)
       }.register(as: :country_payload)
 
       valid_json = "{\"data\":{\"id\":\"4376\",\"type\":\"countries\",\"attributes\":{\"alpha_2\":\"GB\",\"alpha_3\":\"GBR\",\"name\":\"United Kingdom of Great Britain and Northern Ireland\"}}}"

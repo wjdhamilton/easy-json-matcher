@@ -5,8 +5,8 @@ module EasyJSONMatcher
   describe "Custom Validations" do
 
     subject { 
-      SchemaGenerator.new { |sc|
-        sc.has_attribute key: "val", 
+      SchemaGenerator.new {
+        has_attribute key: "val", 
           opts: [
             :required,
             ->(value, errors) { errors << "value was false" unless value === true }

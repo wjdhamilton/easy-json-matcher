@@ -10,8 +10,8 @@ module EasyJSONMatcher
   describe "Date primitive" do
 
     before do
-      @test_schema = SchemaGenerator.new { |g|
-        g.has_date key: "date"
+      @test_schema = SchemaGenerator.new {
+        has_date key: "date"
       }.generate_schema
     end
 
