@@ -4,7 +4,7 @@ This gem is designed to make it easy for you to validate JSON objects in Ruby. I
 
 The interface uses a plain Ruby DSL to make representing expected JSON output in your test suites very straightforward. No need to work in any other language or even create additional files to store your schemas if you don't want to.  
 
-version 0.3.0
+version 0.4.0
 
 ## Installation
 
@@ -23,12 +23,12 @@ to your gemfile.
 To create a new schema for validating against your JSON objects, create a SchemaGenerator object and pass in a block which defines the expected content of your JSON:
 
 ```ruby
-expected = EasyJSONMatcher::SchemaGenerator.new {|json_schema|
+expected = EasyJSONMatcher::SchemaGenerator.new do
     # Validation logic here
-}
+end
 ```
 
-Using curly braces is preferable to `do...end` since the new `SchemaGenerator` object defines a couple of messages for retrieving the `Validator` object which you'll use to validate your schema. These messages are: `generate_schema` which returns an instance of `Node` that you can use to validate JSON objects by calling `node.valid? json`, or `register as: :schema_name` which registers the schema with `SchemaLibrary` for future use and also returns the node as above.
+The new `SchemaGenerator` object defines a couple of messages for retrieving the `Validator` object which you'll use to validate your schema. These messages are: `generate_schema` which returns an instance of `Node` that you can use to validate JSON objects by calling `node.valid? json`, or `register as: :schema_name` which registers the schema with `SchemaLibrary` for future use and also returns the node as above.
 
 ### Defining your schema
 
@@ -37,13 +37,13 @@ Using curly braces is preferable to `do...end` since the new `SchemaGenerator` o
 The `SchemaGenerator` interface provides a series of messages which you can use to define your schema. The simplest of these define expected primitive values as follows:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new { |json_schema|
-    json_schema.has_number  key: :number
-    json_schema.has_boolean key: :boolean
-    json_schema.has_string  key: :string
-    json_schema.has_value   key: :value
-    json_schema.has_object  key: :object
-}
+EasyJSONMatcher::SchemaGenerator.new do 
+    number  key: :number
+    boolean key: :boolean
+    string  key: :string
+    value   key: :value
+    object  key: :object
+end
 ```
 
 Which would correctly validate the below JSON string:
@@ -66,9 +66,9 @@ As a matter of fact, all of these methods are just macros for `NodeGenerator`'s 
 Although dates are not part of the JSON specification, they are commonly used in JSON payloads and so a validator is available using the `#has_date` method. It is used as follows:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new {|json_schema|
-  json_schema.has_date key: :date
-}
+EasyJSONMatcher::SchemaGenerator.new do
+  json_schema.date key: :date
+end
 ```
 
 which would validate the following json object:
@@ -90,11 +90,11 @@ EasyJSONMatcher currently only supports dates in the SQL format, i.e. YYYY-MM-DD
 JSON payloads can contain arrays, which have to be handled differently from primitive values. A JSON array can contain values of types equal to any or all of the above primitives. Therefore `#contains_array` allows you to define the type of values that an object should contain by yielding an object to a block which responds to a series of methods prefixed with `#should_only_contain{type}`:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new {|array_schema|
-  array_schema.contains_array key: :array do |array|
+EasyJSONMatcher::SchemaGenerator.new do
+  contains_array key: :array do |array|
     array.elements_should be: [:number]
   end
-}
+end
 ```
 
 Allowing clients to specify that there can be values of different types may be implemented in future releases.
@@ -102,9 +102,9 @@ Allowing clients to specify that there can be values of different types may be i
 You can also reuse registered schemas in the same manner. This assumes that the schema has been registered with `SchemaLibrary`
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new {|array_schema|
+EasyJSONMatcher::SchemaGenerator.new do |array_schema|
   array_schema.elements_should be: [:schema_name]
-}
+end
 ```
 
 #### Objects
@@ -115,11 +115,11 @@ JSON objects can contain nested objects. These can be defined in the schema in t
 `#contains_node` yields an object that responds to the same messages as that yielded by `SchemaGenerator#new`, so you can define the content of the expected object in the same way that you define the content of your top-level `SchemaGenerator` instance. For instance:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new {|node_schema|
-  node_schema.contains_node key: :level_1 do |level_1|
-    node.has_string key: :title
-    node.contains_node key: :level_2 do |level_2|
-      node.has_string: key: :sub_heading
+EasyJSONMatcher::SchemaGenerator.new do 
+  contains_node key: :level_1 do
+    has_string key: :title
+    contains_node key: :level_2 do
+      has_string: key: :sub_heading
     end
   end
 }
@@ -141,13 +141,13 @@ EasyJSONMatcher::SchemaGenerator.new {|node_schema|
 `has_schema` allows the user to reuse a schema that has already been registered with the `SchemaLibrary`. The message accepts two arguments, the key and the name as follows:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new {|reusable|
+EasyJSONMatcher::SchemaGenerator.new do
   reusable.has_string key: :name
-}.register as: :reusable
+end.register as: :reusable
 
-EasyJSONMatcher::SchemaGenerator.new {|schema|
+EasyJSONMatcher::SchemaGenerator.new do
   schema.has_schema key: :reused_schema, name: :reusable
-}
+end
 ```
 
 will validate the following json object:
@@ -164,34 +164,19 @@ will validate the following json object:
 All of the above methods have a corresponding plural method that allows you to reduce boilerplate. For instance the following code snippets are equivalent:
 
 ```ruby
-schema.has_string key: :a, [:required]
-schema.has_string key: :b, [:required]
+has_string key: :a, [:required]
+has_string key: :b, [:required]
 ```
 
 ```ruby
-schema.has_strings keys: [:a, :b], [:required]
+has_strings keys: [:a, :b], [:required]
 ```
-
-
-### Custom Validations
-
-Sometimes simply knowing that a value is the correct type and is present isn't enough. Sometimes you need more detail. To facilitate this, the `options` array can contain a lambda like so: 
-
-```ruby
-  EasyJSONMatcher::SchemaGenerator.new {|schema|
-    schema.has_value key: val, opts: [ ->(candidate){ "value should say hello world" unless value == "hello world" ] }
-  }
-```
-
-Obviously you can reuse the same lamda in different places. The lambda object must return an object which is the error message that is to be used if the value is not valid.
-
-Occasionally, you want to stop the validation process. For instance, if a value is `nil`, then you want to stop the validation process before it reaches any other verification steps where `nil` is unexpected. If you want to halt the process and just return the set of errors generated so far, then your lambda should return `false`. Not false as in false-y. False as in `false.is_a? FalseClass`.
 
 ### Options
 All the messages that define the content of a schema can accept an options hash with the keyword `:opts`, for instance:
 
 ```ruby
-schema.has_string key: :string, opts: [:required]
+has_string key: :string, opts: [:required]
 ```
 
 This applies to methods prefixed with both `has_` and `contains_`.
@@ -200,6 +185,21 @@ The options accepted by all validators are as follows:
 
 *`required:` indicates that the value must be present. Note that has_value will accept `null` as a value in this case, but the key must be present in the JSON object.*
 *`strict:` If this is set to `true` then the schema will only validate a node where its keyset is equal to or a subset of the expected keyset. If it has any keys in addition to the expected set then the schema will be invalid.*
+
+
+### Custom Validations
+
+Sometimes simply knowing that a value is the correct type and is present isn't enough. Sometimes you need more detail. To facilitate this, the `opts` array can contain a lambda like so: 
+
+```ruby
+  EasyJSONMatcher::SchemaGenerator.new do
+    has_value key: val, opts: [ ->(candidate){ "value should say hello world" unless value == "hello world" ] }
+  end
+```
+
+Obviously you can reuse the same lamda in different places. The lambda object must return an object which is the error message that is to be used if the value is not valid.
+
+Occasionally, you want to stop the validation process. For instance, if a value is `nil`, then you want to stop the validation process before it reaches any other verification steps where `nil` is unexpected. If you want to halt the process and just return the set of errors generated so far, then your lambda should return the literal `false`. Not false as in false-y. False as in `false.is_a? FalseClass`.
 
 #### Global Options
 Options can also be added as defaults for the entire schema by passing a `Hash` to the `global_defaults:` argument for `EasyJSONMatcher::SchemaGenerator.new`, so for instance:
@@ -214,9 +214,9 @@ would generate a validator that required all its keys to be present. Global sett
 Once you have defined your schema, you can retrieve the generated validator using `#generate_schema`. The object that is returned responds to the `#valid?` method to which you pass your JSON object. It will return `true` iff the object complies with the schema:
 
 ```ruby
-schema = EasyJSONMatcher::SchemaGenerator.new {|schema|
+schema = EasyJSONMatcher::SchemaGenerator.new do
   #define the schema
-}.generate_schema
+end.generate_schema
 
 schema.valid? json
 ```
@@ -228,9 +228,9 @@ In order to assist you to understand _why_ the candidate was considered invalid,
 Any schema can be registered with the `SchemaLibrary` object, by sending the `#register` message to an instance of `SchemaGenerator`. Doing so explicitly registers the schema's `Validator` with `SchemaLibrary` and also returns the generated `Validator`. So you can do the following:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new {|schema|
+EasyJSONMatcher::SchemaGenerator.new do
   #define the schema
-}.register as: :saved_schema
+end.register as: :saved_schema
 
 retrieved = EasyJSONMatcher::SchemaLibrary.get_schema name: :saved_schema
 
