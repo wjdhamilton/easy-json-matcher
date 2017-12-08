@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    easy_json_matcher (0.3.4)
+    easy_json_matcher (0.4.0)
       dry-auto_inject (~> 0.3.0)
       dry-container (~> 0.3.0)
 
