@@ -79,10 +79,10 @@ module EasyJSONMatcher
     test "It can validate JSON Schema payloads" do
       SchemaGenerator.new { 
         has_attribute key: "id", opts: [:number, :required]
-        contains_node(key: "attributes") do 
-          has_attribute key: "alpha_2",  opts: [ :string, :required ]
-          has_attribute key: "alpha_3",  opts: [ :string, :required ]
-          has_attribute key: "name",     opts: [ :string, :required ]
+        contains_node(key: "attributes") do |node|
+          node.has_attribute key: "alpha_2",  opts: [ :string, :required ]
+          node.has_attribute key: "alpha_3",  opts: [ :string, :required ]
+          node.has_attribute key: "name",     opts: [ :string, :required ]
         end
       }.register(as: :country)
 
