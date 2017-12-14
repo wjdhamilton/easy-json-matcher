@@ -22,5 +22,9 @@ module EasyJSONMatcher
       candidate = coercer.coerce(json: candidate)
       validation_chain.call(value: candidate)
     end
+
+    def to_s
+      "#{key.to_s} : #{validation_chain.to_s}"
+    end
   end
 end

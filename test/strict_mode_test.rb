@@ -30,5 +30,13 @@ module EasyJSONMatcher
 
       subject.validate(candidate: candidate).wont_be :empty?
     end
+
+    it "should not validate candidates missing keys" do
+      candidate = {
+        a: "a"
+      }.to_json
+
+      subject.validate(candidate: candidate).wont_be :empty?
+    end
   end
 end

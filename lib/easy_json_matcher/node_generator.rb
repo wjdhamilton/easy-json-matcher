@@ -12,7 +12,6 @@ module EasyJSONMatcher
       @validators = {} 
       @node_opts = extract_opts(local: opts, global: global_opts)
       @global_opts = global_opts
-      yield self if block_given?
     end
 
     def generate_node
@@ -26,8 +25,8 @@ module EasyJSONMatcher
     end
 
     def contains_node(key:, opts: [], &block)
-      if key == "alpha_2" then byebug end
-      generator = self.class.new(opts: opts, global_opts: global_opts, &block)
+      generator = self.class.new(opts: opts, global_opts: global_opts)
+      generator.instance_eval &block if block_given?
       validators[key] = generator.generate_node
     end
 

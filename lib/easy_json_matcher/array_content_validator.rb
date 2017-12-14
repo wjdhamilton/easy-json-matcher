@@ -18,5 +18,9 @@ module EasyJSONMatcher
     def >> (step)
       @next_step = step
     end
+
+    def to_s
+      @verifier.to_s
+    end
   end
 end

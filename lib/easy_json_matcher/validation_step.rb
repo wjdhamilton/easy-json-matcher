@@ -32,5 +32,14 @@ module EasyJSONMatcher
     def is_tail?
       next_step.nil?
     end
+
+    def to_s
+      s = if next_step == nil then "" else ">> #{next_step.to_s}" end
+      "#{verifier.to_s} #{s} \n"
+    end
+
+    def inspect
+      to_s
+    end
   end
 end

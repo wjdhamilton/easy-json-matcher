@@ -42,9 +42,9 @@ module EasyJSONMatcher
       assert(schema.valid?(candidate: candidate), "test_schema did not validate correctly")
     end
 
-    test "SchemaLibrary should thrown a MissingSchemaException if an unregistered schema is requested" do
+    test "SchemaLibrary should thrown a UnknownValidationStepError if an unregistered schema is requested" do
       schema = SchemaLibrary.get_schema(name: "#{@name.to_s}-wibble")
-      assert_raises(MissingSchemaException) do
+      assert_raises(UnknownValidationStepError) do
         schema.call(value: {}.to_json)
       end
     end
@@ -53,7 +53,7 @@ module EasyJSONMatcher
       schema = SchemaLibrary.get_schema(name: :womble)
       begin
         schema.call(value: {}.to_json)
-      rescue MissingSchemaException => ex
+      rescue UnknownValidationStepError => ex
         assert ex.message =~ /womble/
       end
     end
@@ -67,8 +67,6 @@ module EasyJSONMatcher
       invalid_json = {
         is_present: true,
       }
-
-      # assert_not(test_schema.valid?(invalid_json), "#{invalid_json} should not have been valid as it does not include the saved schema")
 
       valid_json = invalid_json.dup
       valid_json.store(@name, {name: "Achilles Tang"})

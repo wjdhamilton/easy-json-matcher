@@ -1,6 +1,5 @@
 require "test_helper"
 require "easy_json_matcher/validation_chain_factory"
-require "easy_json_matcher/unknown_validation_step_error"
 
 module EasyJSONMatcher
 
@@ -23,7 +22,8 @@ module EasyJSONMatcher
       end
 
       it "should otherwise raise an error" do
-        skip "Leave for future release"
+        skip "This is currently unnecessary, but ought to be considered when
+              developing future versions"
         cannot_use = String.new
         -> { ValidationChainFactory.get_step_for(validating: cannot_use) }.
           must_raise UnknownValidationStepError

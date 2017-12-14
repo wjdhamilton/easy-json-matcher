@@ -13,7 +13,7 @@ module EasyJSONMatcher
     def call(value:)
       error_hash = validators.each_with_object({}) do |k_v, errors_found|
         key = k_v[0]
-        val = value[key]
+        val = value[key.to_s]
         validator = k_v[1]
         results = validator.call(value: val)
         errors_found[key] = results unless results.empty?
@@ -25,8 +25,22 @@ module EasyJSONMatcher
     end
 
     def validate_strict_keyset(keys:, errors:, candidates:)
+      missing_keys(keys: keys, errors: errors, candidates: candidates)
+      unexpected_keys(keys: keys, errors: errors, candidates: candidates)
+    end
+
+    def missing_keys(keys:, errors:, candidates:)
+      missing = keys - candidates
+      errors[:missing_keys] = "Missing keys: #{missing}" unless missing.empty?
+    end
+
+    def unexpected_keys(keys:, errors:, candidates:)
       rogue_keys = candidates - keys
       errors[:unexpected_keys] = "Unexpected keys: #{rogue_keys}" unless rogue_keys.empty?
+    end
+
+    def to_s
+      validators.to_s
     end
   end
 end
