@@ -31,7 +31,7 @@ module EasyJSONMatcher
         elsif schema = SchemaLibrary.get_schema(name: validating)
           schema
         else
-          #This is just here as a catch-all. The last step should always succeed. 
+          #This is just here as a catch-all. The prior step should always succeed. 
           raise UnknownValidationStepError.new(type: validating)
         end
       end

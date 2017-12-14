@@ -19,9 +19,7 @@ module EasyJSONMatcher
         errors_found[key] = results unless results.empty?
       end
       validate_strict_keyset(keys: validators.keys, candidates: value.keys, errors: error_hash) if strict
-      errors = []
-      errors << error_hash unless error_hash.empty?
-      errors
+      if error_hash.empty? then [] else [error_hash] end
     end
 
     def validate_strict_keyset(keys:, errors:, candidates:)

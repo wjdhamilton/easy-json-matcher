@@ -10,6 +10,7 @@ module EasyJSONMatcher
         has_attribute(key: "name", opts: [ :string, :required ])
       }
       sc.register(as: @name)
+       byebug 
     end
 
     test "As a user I want to be able to register a Schema so I can reuse it later" do

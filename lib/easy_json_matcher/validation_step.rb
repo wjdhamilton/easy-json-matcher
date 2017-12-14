@@ -32,9 +32,5 @@ module EasyJSONMatcher
     def is_tail?
       next_step.nil?
     end
-
-    def inspect
-      to_s
-    end
   end
 end
