@@ -16,8 +16,5 @@ module EasyJSONMatcher
       verifier.call(value: value)
     end
 
-    def to_s
-      verifier.to_s
-    end
   end
 end

@@ -39,8 +39,5 @@ module EasyJSONMatcher
       errors[:unexpected_keys] = "Unexpected keys: #{rogue_keys}" unless rogue_keys.empty?
     end
 
-    def to_s
-      validators.to_s
-    end
   end
 end

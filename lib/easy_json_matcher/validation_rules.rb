@@ -12,10 +12,6 @@ module EasyJSONMatcher
     def call(value, errors)
       rule.call(value, errors)
     end
-
-    def to_s
-      type.to_s
-    end
   end
 
 

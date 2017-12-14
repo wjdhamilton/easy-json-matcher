@@ -15,8 +15,5 @@ module EasyJSONMatcher
       node_validator.call(value: value)
     end
 
-    def to_s
-      node_validator.to_s
-    end
   end
 end
