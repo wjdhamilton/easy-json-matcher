@@ -4,6 +4,8 @@ module EasyJSONMatcher
   describe Printer do
 
     it "should properly print a Schema" do
+       byebug 
+      skip "This test is currently checked using by printing to the console"
       schema = SchemaGenerator.new {
         string key: "val"
         contains_node key: "node" do
