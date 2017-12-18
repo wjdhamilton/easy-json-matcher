@@ -9,7 +9,7 @@ The interface uses a plain Ruby DSL to make representing expected JSON output in
 your test suites very straightforward. No need to work in any other language or
 even create additional files to store your schemas if you don't want to.  
 
-version 0.4.0
+version 0.5.0
 
 ## Installation
 
@@ -21,10 +21,13 @@ or add
 
 to your gemfile.
 
+## Usage
+
+Note that `EasyJSONMatcher` and `EJM` are interchangeable.
 
 ## SchemaGenerator
 
-`EasyJSONMatcher::SchemaGenerator` is responsible for providing the client
+`EJM::SchemaGenerator` is responsible for providing the client
 interface. Use it to define your schemas.
 
 To create a new schema for validating against your JSON objects, create a
@@ -32,7 +35,7 @@ SchemaGenerator object and pass in a block which defines the expected content of
 your JSON:
 
 ```ruby
-expected = EasyJSONMatcher::SchemaGenerator.new do
+expected = EJM::SchemaGenerator.new do
     # Validation logic here
 end
 ```
@@ -53,7 +56,7 @@ to define your schema. The simplest of these define expected primitive values as
 follows:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new do 
+EJM::SchemaGenerator.new do 
     number  key: :number
     boolean key: :boolean
     string  key: :string
@@ -97,7 +100,7 @@ JSON payloads and so a validator is available using the `#has_date` method. It
 is used as follows:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new do
+EJM::SchemaGenerator.new do
   json_schema.date key: :date
 end
 ```
@@ -128,7 +131,7 @@ which responds to a series of methods prefixed with
 `#should_only_contain{type}`:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new do
+EJM::SchemaGenerator.new do
   contains_array key: :array do |array|
     array.elements_should be: [:number]
   end
@@ -142,7 +145,7 @@ You can also reuse registered schemas in the same manner. This assumes that the
 schema has been registered with `SchemaLibrary`
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new do |array_schema|
+EJM::SchemaGenerator.new do |array_schema|
   array_schema.elements_should be: [:schema_name]
 end
 ```
@@ -161,7 +164,7 @@ object in the same way that you define the content of your top-level
 `SchemaGenerator` instance. For instance:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new do 
+EJM::SchemaGenerator.new do 
   contains_node key: :level_1 do
     has_string key: :title
     contains_node key: :level_2 do
@@ -190,11 +193,11 @@ with the `SchemaLibrary`. The message accepts two arguments, the key and the
 name as follows:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new do
+EJM::SchemaGenerator.new do
   reusable.has_string key: :name
 end.register as: :reusable
 
-EasyJSONMatcher::SchemaGenerator.new do
+EJM::SchemaGenerator.new do
   schema.has_schema key: :reused_schema, name: :reusable
 end
 ```
@@ -251,7 +254,7 @@ enough. Sometimes you need more detail. To facilitate this, the `opts` array can
 contain a lambda like so: 
 
 ```ruby
-  EasyJSONMatcher::SchemaGenerator.new do
+  EJM::SchemaGenerator.new do
     has_value key: val, opts: [ ->(candidate){ "value should say hello world" unless value == "hello world" ] }
   end
 ```
@@ -270,11 +273,11 @@ should return the literal `false`. Not false as in false-y. False as in
 #### Global Options
 
 Options can also be added as defaults for the entire schema by passing a `Hash`
-to the `global_defaults:` argument for `EasyJSONMatcher::SchemaGenerator.new`,
+to the `global_defaults:` argument for `EJM::SchemaGenerator.new`,
 so for instance:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new(global_opts: [:required])
+EJM::SchemaGenerator.new(global_opts: [:required])
 ```
 
 would generate a validator that required all its keys to be present. Global
@@ -290,7 +293,7 @@ method to which you pass your JSON object. It will return `true` iff the object
 complies with the schema:
 
 ```ruby
-schema = EasyJSONMatcher::SchemaGenerator.new do
+schema = EJM::SchemaGenerator.new do
   #define the schema
 end.generate_schema
 
@@ -311,17 +314,17 @@ registers the schema's `Validator` with `SchemaLibrary` and also returns the
 generated `Validator`. So you can do the following:
 
 ```ruby
-EasyJSONMatcher::SchemaGenerator.new do
+EJM::SchemaGenerator.new do
   #define the schema
 end.register as: :saved_schema
 
-retrieved = EasyJSONMatcher::SchemaLibrary.get_schema name: :saved_schema
+retrieved = EJM::SchemaLibrary.get_schema name: :saved_schema
 
 validity = retrieved.valid? json
 ```
 
 You can also add a schema directly using
-`EasyJSONMatcher::SchemaLibrary#add_schema` if you wish.
+`EJM::SchemaLibrary#add_schema` if you wish.
 
 ## Issues
 
